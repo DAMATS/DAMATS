@@ -10,4 +10,4 @@
 
 info "Installing CURL ..."
 
-apt-get --assume-yes install curl
+yum --assumeyes install curl

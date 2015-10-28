@@ -10,4 +10,4 @@
 
 info "Installing GDAL library ... "
 
-apt-get --assume-yes install gdal-bin python-gdal
+yum --assumeyes install gdal gdal-libs gdal-python

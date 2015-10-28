@@ -10,4 +10,4 @@
 
 info "Installing UNZIP ..."
 
-apt-get --assume-yes install unzip
+yum --assumeyes install unzip

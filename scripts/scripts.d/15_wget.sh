@@ -10,4 +10,4 @@
 
 info "Installing WGET ..."
 
-apt-get --assume-yes install wget
+yum --assumeyes install wget

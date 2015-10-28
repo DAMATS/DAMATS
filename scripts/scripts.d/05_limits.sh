@@ -6,6 +6,9 @@
 #-------------------------------------------------------------------------------
 # Copyright (C) 2015 EOX IT Services GmbH
 
+#NOTE: So far it works on Centos 7. It's not sure though how long before
+#      it gets taken over by systmed.
+
 . `dirname $0`/../lib_logging.sh
 
 info "Setting the resource limits ... "
@@ -25,3 +28,4 @@ $DAMATS_USER      hard    nofile     500000
 root       soft    nofile     500000
 root       hard    nofile     500000
 END
+

@@ -14,40 +14,29 @@
 info "Installing Apache HTTP server ... "
 
 # path to the apache configuration
-CONF_DEFAULT="/etc/apache2/sites-available/000-default.conf"
-CONF_DEFAULT_SSL="/etc/apache2/sites-available/default-ssl.conf"
+CONF_DEFAULT="/etc/httpd/conf.d/damats.conf"
+CONF_DEFAULT_SSL="/etc/httpd/conf.d/damats_ssl.conf"
 
 # WSGI socket prefix
 SOCKET_PREFIX="run/wsgi"
 #======================================================================
 
 # STEP 1:  INSTALL PACKAGES
-
-apt-get --assume-yes install apache2 apache2-bin libapache2-mod-wsgi
+yum --assumeyes install httpd mod_wsgi #mod_ssl
 
 
 # STEP 2: FIREWALL SETUP (OPTIONAL)
-
-# we enable access to port 80 and 443 from anywhere
-# and make the iptables chages permanent
-if [ "$CONFIGURE_IPTABLES" = "YES" ]
+# We enable access to port 80 and 443 from anywhere
+# and make the firewal chages permanent.
+if [ "$ENABLE_FIREWALL" = "YES" ]
 then
-    for IPTABLES in /sbin/ip6tables /sbin/iptables
+    for SERVICE in http #https
     do
-        if [ -z "`$IPTABLES -L | grep '^ACCEPT *tcp *-- *anywhere *anywhere *state *NEW *tcp *dpt:http'`" ]
-        then
-            $IPTABLES -I INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
-        fi
-        # HTTPS disabled
-        #if [ -z "`$IPTABLES -L | grep '^ACCEPT *tcp *-- *anywhere *anywhere *state *NEW *tcp *dpt:https'`" ]
-        #then
-        #    $IPTABLES -I INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
-        #fi
+        sudo firewall-cmd --add-service=$SERVICE
+        sudo firewall-cmd --permanent --add-service=$SERVICE
     done
-
-    # save the rules
-    invoke-rc.d iptables-persistent save
 fi
+echo OK
 
 # STEP 3: SETUP THE SITE
 #NOTE 1: Current setup does not support multiple virtual hosts.
@@ -116,8 +105,7 @@ fi
 
 # STEP 4: START THE SERVICE
 
-# enable the HTTP service
-sysv-rc-conf apache2 on
-
-#
-service apache2 start
+# enable start the httpd service
+sudo systemctl enable httpd.service
+sudo systemctl start httpd.service
+sudo systemctl status httpd.service

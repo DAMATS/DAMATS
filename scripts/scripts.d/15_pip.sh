@@ -10,4 +10,4 @@
 
 info "Installing PIP Python package manager ..."
 
-apt-get --assume-yes install python-pip python-pip-whl
+yum --assumeyes install python-pip

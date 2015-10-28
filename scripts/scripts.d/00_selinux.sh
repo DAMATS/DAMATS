@@ -1,14 +1,20 @@
 #!/bin/sh
 #-------------------------------------------------------------------------------
 #
-# Purpose: sysv-rc-conf installation.
+# Purpose: SELinux configuration
 # Author(s): Martin Paces <martin.paces@eox.at>
 #-------------------------------------------------------------------------------
 # Copyright (C) 2015 EOX IT Services GmbH
 
 . `dirname $0`/../lib_logging.sh
 
-info "Installing sysv-rc-conf ..."
+info "Configuring SELinux ..."
 
-apt-get --assume-yes install sysv-rc-conf
+# change to permissive mode in the current session
+[ `getenforce` != "Disabled" ] && setenforce "Permissive"
 
+# disable SELinux permanently
+sed -e 's/^[ 	]*SELINUX=/SELINUX=permissive/' -i /etc/selinux/config
+
+# print status
+sestatus

@@ -32,7 +32,7 @@
 
 _locate_conf()
 {
-    _CONFS="/etc/apache2/sites-available/*.conf"
+    _CONFS="/etc/httpd/conf/httpd.conf /etc/httpd/conf.d/*.conf"
     for _F_ in $_CONFS
     do
         if [ 0 -lt `grep -c "$1" "$_F_"` ]
@@ -42,23 +42,6 @@ _locate_conf()
         fi
     done
     return 1
-}
-
-disable_site()
-{
-    pushd .
-    cd /etc/apache2/sites-enabled/
-    [ -f "`basename "$1"`" -o -h "`basename "$1"`" ] && rm -fv "`basename "$1"`"
-    popd
-}
-
-enable_site()
-{
-    pushd .
-    cd /etc/apache2/sites-enabled/
-    [ -f "`basename "$1"`" -o -h "`basename "$1"`" ] && rm -fv "`basename "$1"`"
-    ln -sv "../sites-available/`basename "$1"`"
-    popd
 }
 
 locate_apache_conf()

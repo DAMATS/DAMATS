@@ -31,9 +31,8 @@
 VERSION_FILE="`dirname $0`/../version.txt"
 export DAMATS_VERSION="`cat "$VERSION_FILE"`"
 
-# flag indicating whether the installation script shall install and configure 
-# the iptables firewall. 
-export CONFIGURE_IPTABLES=${CONFIGURE_IPTABLES:-YES}
+# flag indicating whether the installation script shall enable the firewall
+export ENABLE_FIREWALL=${ENABLE_FIREWALL:-YES}
 
 # public hostname (or IP number) under which the ODA-OS shall be accessable
 # NOTE: Critical parameter! Be sure you set to proper value.

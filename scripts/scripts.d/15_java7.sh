@@ -10,4 +10,4 @@
 
 info "Installing Java7 JRE ..."
 
-apt-get --assume-yes install openjdk-7-jre-headless
+yum --assumeyes install java-1.7.0-openjdk-headless

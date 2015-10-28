@@ -10,5 +10,4 @@
 
 info "Installing JQ JSON processor ..."
 
-apt-get --assume-yes install jq
-
+yum --assumeyes install jq

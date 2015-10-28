@@ -10,4 +10,4 @@
 
 info "Installing GeoTIFF library and tools ..."
 
-apt-get --assume-yes install libgeotiff2 geotiff-bin
+yum --assumeyes install libgeotiff
