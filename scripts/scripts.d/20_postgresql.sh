@@ -17,8 +17,10 @@ PG_DATA_DIR="${DAMATS_PGDATA_DIR:-/var/lib/postgresql/9.3/main}"
 PG_INITDB="/usr/lib/postgresql/9.3/bin/initdb"
 #======================================================================
 
-# STEP 0: Shut-down the postgress if already installed and running.
+# STEP 1: INSTALL PACKAGES
+apt-get --assume-yes install postgresql postgis postgresql-9.3-postgis-2.1 python-psycopg2
 
+# STEP 2: Shut-down the postgress if already installed and running.
 if [ -f "/etc/init.d/postgresql" ]
 then
     service postgresql stop || :
@@ -28,12 +30,8 @@ then
     [ ! -d "$PG_OLD_DATA_DIR" ] || rm -fR "$PG_OLD_DATA_DIR"
 fi
 
-# STEP 1: INSTALL PACKAGES
 
-apt-get --assume-yes install postgresql postgis postgresql-9.3-postgis-2.1 python-psycopg2
-
-# STEP 2: CONFIGURE THE STORAGE DIRECTORY
-
+# STEP 3: CONFIGURE THE STORAGE DIRECTORY
 if [ -n "$PG_DATA_DIR" ]
 then
     info "Setting the PostgreSQL data location to: $PG_DATA_DIR"
@@ -43,8 +41,7 @@ wq
 END
 fi
 
-# STEP 3: INIT THE DB AND START THE SERVICE
-
+# STEP 4: INIT THE DB AND START THE SERVICE
 info "New database initialisation ... "
 # database initiaisation
 mkdir -p "$PG_DATA_DIR"
@@ -55,8 +52,7 @@ sudo -u postgres "$PG_INITDB" -D "$PG_DATA_DIR"
 sysv-rc-conf postgresql on
 service postgresql start
 
-# STEP 4: SETUP POSTGIS DATABASE TEMPLATE
-
+# STEP 5: SETUP POSTGIS DATABASE TEMPLATE
 if [ -z "`sudo sudo -u postgres psql --list | grep template_postgis`" ]
 then
     sudo -u postgres createdb template_postgis
