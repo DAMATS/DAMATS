@@ -17,7 +17,7 @@ yum --assumeyes install install epel-release
 #rpm -q --quiet elgis-release || rpm -Uvh http://elgis.argeo.org/repos/6/elgis-release-6-6_0.noarch.rpm
 
 # EOX - EOX RPM repository
-#rpm -q --quiet eox-release || rpm -Uvh http://yum.packages.eox.at/el/eox-release-6-2.noarch.rpm
+rpm -q --quiet eox-release || rpm -Uvh http://yum.packages.eox.at/el/eox-release-7-0.noarch.rpm
 
 #info "Enabling EOX testing repository for explicitly listed packages ..."
 #

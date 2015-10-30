@@ -35,13 +35,13 @@ export DAMATS_VERSION="`cat "$VERSION_FILE"`"
 export ENABLE_FIREWALL=${ENABLE_FIREWALL:-YES}
 
 # public hostname (or IP number) under which the ODA-OS shall be accessable
-# NOTE: Critical parameter! Be sure you set to proper value.
+# NOTE: Critical parameter! Be sure you set it to the proper value.
 export DAMATS_HOSTNAME=${DAMATS_HOSTNAME:-$HOSTNAME}
 
 # root directory of the DAMATS - by default set to '/srv/damats'
 export DAMATS_ROOT=${DAMATS_ROOT:-/srv/damats}
 
-# directory where the log files shall be places - by default set to '/var/log/damats'
+# directory where the log files shall be placed - by default set to '/var/log/damats'
 export DAMATS_LOGDIR=${DAMATS_LOGDIR:-/var/log/damats}
 
 # directory of the short-term data storage - by default set to '/tmp/damats'
@@ -58,7 +58,11 @@ export DAMATS_GROUP=${DAMATS_GROUP:-damats}
 export DAMATS_USER=${DAMATS_USER:-damats}
 
 # location of the DAMATS Server home directory
-export DAMATS_SERVER_HOME=${DAMATS_SERVER_HOME:-$DAMATS_ROOT/server}
+export DAMATS_SERVER_HOME=${DAMATS_SERVER_HOME:-$DAMATS_ROOT/eoxs}
+# WSGI daemon - number of processes to be used by the DAMATS EOxServer instances
+export EOXS_WSGI_NPROC=4
+# WSGI daemon - process group to be used by the DAMATS EOxServer instances
+export EOXS_WSGI_PROCESS_GROUP=damats_eoxs_ows
 
 # location of the DAMATS Client home directory
-export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/client}
+export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}

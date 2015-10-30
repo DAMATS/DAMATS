@@ -43,9 +43,9 @@ sudo systemctl daemon-reload
 info "New database initialisation ... "
 
 sudo postgresql-setup initdb
-sudo systemctl start postgresql.service
 sudo systemctl disable postgresql.service # DO NOT REMOVE!
 sudo systemctl enable postgresql.service
+sudo systemctl start postgresql.service
 sudo systemctl status postgresql.service
 
 # STEP 5: SETUP POSTGIS DATABASE TEMPLATE

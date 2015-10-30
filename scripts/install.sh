@@ -64,11 +64,11 @@ INSTALL_LOG="./install.log"
         groupadd -r "$DAMATS_GROUP"
     }
 
-
     id -u "$DAMATS_USER" >/dev/null 2>&1 || \
     {
         info "Creatting system user: $DAMATS_USER"
-        useradd -r -m -g "$DAMATS_GROUP" -d "$DAMATS_ROOT" -c "DAMATS system user" "$DAMATS_USER"
+        useradd -r -M -g "$DAMATS_GROUP" -d "$DAMATS_ROOT" -s /sbin/nologin -c "DAMATS system user" "$DAMATS_USER"
+        usermod -L "$DAMATS_USER"
     }
 
     # just in case the ODA-OS directories do not exists create them
