@@ -82,13 +82,29 @@ INSTALL_LOG="./install.log"
     #-------------------------------------------------------------------------------
     # execute specific installation scripts
 
-    if [ $# -ge 1 ]
+    SCRIPTS=""
+    PROFILE="install.d"
+
+
+    # parse command line arguments
+    while [ "$#" -gt 0 ]
+    do
+        case "$1" in
+            -d | --devel )
+                info "Development installation profile selected."
+                PROFILE="devel.d"
+                ;;
+            *)
+                SCRIPTS="$SCRIPTS $1"
+            ;;
+        esac
+        shift
+    done
+
+    # in case of no script select all in the chosen profile
+    if [ -z "$SCRIPTS" ]
     then
-        # execute selected scripts only
-        SCRIPTS=$*
-    else
-        # execute all default installation scripts
-        SCRIPTS="`dirname $0`/install.d/"*.sh
+        SCRIPTS="`dirname $0`/$PROFILE/"*.sh
     fi
 
     for SCRIPT in $SCRIPTS

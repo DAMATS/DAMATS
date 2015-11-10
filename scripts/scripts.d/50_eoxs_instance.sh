@@ -232,14 +232,14 @@ END
 
 # set the allowed hosts
 sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
-1,\$s/\(^ALLOWED_HOSTS[	 ]*=[	 ]*\).*/\1['$HOSTNAME','127.0.0.1','::1']/
+1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['$HOSTNAME','127.0.0.1','::1']/
 wq
 END
 
 # set-up logging
 sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
-g/^DEBUG[	 ]*=/s#\(^DEBUG[	 ]*=[	 ]*\).*#\1False#
-g/^LOGGING[	 ]*=/,/^}/d
+g/^DEBUG\s*=/s#\(^DEBUG\s*=\s*\).*#\1False#
+g/^LOGGING\s*=/,/^}/d
 a
 LOGGING = {
     'version': 1,
@@ -309,9 +309,33 @@ $EOXSLOG {
 }
 END
 
+#-------------------------------------------------------------------------------
+# STEP 5: DAMATS SPECIFIC SETTINGS
+
+info "DAMATS specific configuration ..."
+
+sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
+/^INSTALLED_APPS\s*=/
+/^)/
+a
+# DAMATS specific apps
+INSTALLED_APPS += (
+    'damats.webapp',
+)
+.
+/^COMPONENTS\s*=/
+/^)/a
+# DAMATS specific components
+COMPONENTS += (
+    'damats.processes.**',
+)
+.
+wq
+END
+
 
 #-------------------------------------------------------------------------------
-# STEP 4: EOXSERVER INITIALISATION
+# STEP 5: EOXSERVER INITIALISATION
 info "Initializing EOxServer instance '${INSTANCE}' ..."
 
 # collect static files
@@ -325,6 +349,6 @@ sudo -u "$DAMATS_USER" python "$MNGCMD" syncdb --noinput
 #[ -f "$INITIAL_RANGETYPES" ] && sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load < "$INITIAL_RANGETYPES"
 
 #-------------------------------------------------------------------------------
-# STEP 5: FINAL WEB SERVER RESTART
+# STEP 6: FINAL WEB SERVER RESTART
 sudo systemctl restart httpd.service
 sudo systemctl status httpd.service

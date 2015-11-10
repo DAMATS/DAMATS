@@ -1,2 +1,2 @@
-Default installation profile.
+Development mode installation profile.
 Make symbolic links to "scripts.d" for all default installation scripts.
