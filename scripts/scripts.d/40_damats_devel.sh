@@ -16,7 +16,7 @@ DAMATS_DEV_PATH="${DAMATS_DEV_PATH:-/usr/local/damats}"
 
 # STEP 1: INSTALL DEPENDENCIES
 # NOTE: EOxServer and its dependencies are required!
-#yum --assumeyes install python-dateutil python-lxml mapserver mapserver-python proj-epsg
+yum --assumeyes install python-ipaddr
 
 # STEP 2: INSTALL DAMATS
 # Install EOxServer in the development mode.
