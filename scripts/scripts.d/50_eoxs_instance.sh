@@ -309,6 +309,9 @@ $EOXSLOG {
 }
 END
 
+# create fixtures directory
+sudo -u "$DAMATS_USER" mkdir -p "${INSTROOT}/${INSTANCE}/${INSTANCE}/data/fixtures"
+
 #-------------------------------------------------------------------------------
 # STEP 5: DAMATS SPECIFIC SETTINGS
 
@@ -335,7 +338,7 @@ END
 
 
 #-------------------------------------------------------------------------------
-# STEP 5: EOXSERVER INITIALISATION
+# STEP 6: EOXSERVER INITIALISATION
 info "Initializing EOxServer instance '${INSTANCE}' ..."
 
 # collect static files
