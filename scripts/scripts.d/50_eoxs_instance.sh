@@ -24,7 +24,9 @@ HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
 INSTROOT="`dirname "$DAMATS_SERVER_HOME"`"
 
+BASIC_AUTH_PASSWD_FILE="/etc/httpd/authn/damats-passwords"
 SETTINGS="${INSTROOT}/${INSTANCE}/${INSTANCE}/settings.py"
+URLS="${INSTROOT}/${INSTANCE}/${INSTANCE}/urls.py"
 INSTSTAT_URL="/${INSTANCE}_static" # DO NOT USE THE TRAILING SLASH!!!
 INSTSTAT_DIR="${INSTROOT}/${INSTANCE}/${INSTANCE}/static"
 WSGI="${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
@@ -144,21 +146,26 @@ do
     # WSGI service endpoint
     Alias /$INSTANCE "${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
     <Directory "${INSTROOT}/${INSTANCE}/${INSTANCE}">
-            Options +ExecCGI -MultiViews +FollowSymLinks
-            AddHandler wsgi-script .py
-            WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
-            Require all granted
-            Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Headers Content-Type
-            Header set Access-Control-Allow-Methods "POST, GET"
+        Options +ExecCGI -MultiViews +FollowSymLinks
+        AddHandler wsgi-script .py
+        WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Headers Content-Type
+        Header set Access-Control-Allow-Methods "POST, GET"
+        #Require all granted
+        AuthType basic
+        AuthName "DAMATS server login"
+        AuthBasicProvider file
+        AuthUserFile "$BASIC_AUTH_PASSWD_FILE"
+        Require valid-user
     </Directory>
 
     # static content
     Alias $INSTSTAT_URL "$INSTSTAT_DIR"
     <Directory "$INSTSTAT_DIR">
-            Options -MultiViews +FollowSymLinks
-            Require all granted
-            Header set Access-Control-Allow-Origin "*"
+        Options -MultiViews +FollowSymLinks
+        Require all granted
+        Header set Access-Control-Allow-Origin "*"
     </Directory>
 
     # EOXS00_END - EOxServer instance - Do not edit or remove this line!
@@ -166,6 +173,12 @@ do
 wq
 END
 done
+
+# create basic authentication password file
+mkdir -p "`dirname "$BASIC_AUTH_PASSWD_FILE"`"
+touch "$BASIC_AUTH_PASSWD_FILE"
+chown "root:apache" "$BASIC_AUTH_PASSWD_FILE"
+chmod 0640 "$BASIC_AUTH_PASSWD_FILE"
 
 #-------------------------------------------------------------------------------
 # STEP 3: EOXSERVER CONFIGURATION
@@ -336,6 +349,16 @@ COMPONENTS += (
 wq
 END
 
+sudo -u "$DAMATS_USER" ex "$URLS" <<END
+$ a
+
+# DAMATS specific views
+urlpatterns += patterns('',
+    (r'^damats/?$','damats.webapp.views.user_profile'),
+)
+.
+wq
+END
 
 #-------------------------------------------------------------------------------
 # STEP 6: EOXSERVER INITIALISATION
