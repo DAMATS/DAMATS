@@ -77,6 +77,7 @@ class Group(Entity):
 
 class User(Entity):
     """ User model."""
+    locked = models.BooleanField(default=False)
     groups = models.ManyToManyField(
         Group, through=Group.users.through, blank=True, related_name='+'
     )

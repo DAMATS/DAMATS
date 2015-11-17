@@ -69,6 +69,7 @@ class UserAdmin(admin.ModelAdmin):
     form = UserAdminForm
     model = models.User
     fields = (
+        'locked',
         'identifier',
         'name',
         'description',
