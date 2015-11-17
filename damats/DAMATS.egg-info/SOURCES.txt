@@ -1,8 +1,0 @@
-setup.py
-DAMATS.egg-info/PKG-INFO
-DAMATS.egg-info/SOURCES.txt
-DAMATS.egg-info/dependency_links.txt
-DAMATS.egg-info/not-zip-safe
-DAMATS.egg-info/requires.txt
-DAMATS.egg-info/top_level.txt
-damats/__init__.py
