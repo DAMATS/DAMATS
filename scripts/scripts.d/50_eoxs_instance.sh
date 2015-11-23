@@ -27,6 +27,7 @@ INSTROOT="`dirname "$DAMATS_SERVER_HOME"`"
 BASIC_AUTH_PASSWD_FILE="/etc/httpd/authn/damats-passwords"
 SETTINGS="${INSTROOT}/${INSTANCE}/${INSTANCE}/settings.py"
 URLS="${INSTROOT}/${INSTANCE}/${INSTANCE}/urls.py"
+FIXTURES_DIR="${INSTROOT}/${INSTANCE}/${INSTANCE}/data/fixtures"
 INSTSTAT_URL="/${INSTANCE}_static" # DO NOT USE THE TRAILING SLASH!!!
 INSTSTAT_DIR="${INSTROOT}/${INSTANCE}/${INSTANCE}/static"
 WSGI="${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
@@ -126,7 +127,7 @@ END
 #ALLOWED_HOSTS = []
 
 #-------------------------------------------------------------------------------
-# STEP 3: APACHE WEB SERVER INTEGRATION
+# STEP 4: APACHE WEB SERVER INTEGRATION
 
 info "Mapping EOxServer instance '${INSTANCE}' to URL path '${INSTANCE}' ..."
 
@@ -181,7 +182,7 @@ chown "root:apache" "$BASIC_AUTH_PASSWD_FILE"
 chmod 0640 "$BASIC_AUTH_PASSWD_FILE"
 
 #-------------------------------------------------------------------------------
-# STEP 3: EOXSERVER CONFIGURATION
+# STEP 5: EOXSERVER CONFIGURATION
 
 # set the service url and log-file
 #/^[	 ]*logging_filename[	 ]*=/s;\(^[	 ]*logging_filename[	 ]*=\).*;\1${EOXSLOG};
@@ -301,7 +302,6 @@ LOGGING = {
 .
 wq
 END
-#wq
 
 # touch the logfifile and set the right permissions
 [ ! -f "$EOXSLOG" ] || rm -fv "$EOXSLOG"
@@ -323,10 +323,10 @@ $EOXSLOG {
 END
 
 # create fixtures directory
-sudo -u "$DAMATS_USER" mkdir -p "${INSTROOT}/${INSTANCE}/${INSTANCE}/data/fixtures"
+sudo -u "$DAMATS_USER" mkdir -p "$FIXTURES_DIR"
 
 #-------------------------------------------------------------------------------
-# STEP 5: DAMATS SPECIFIC SETTINGS
+# STEP 6: DAMATS SPECIFIC SETTINGS
 
 info "DAMATS specific configuration ..."
 
@@ -355,13 +355,31 @@ $ a
 # DAMATS specific views
 urlpatterns += patterns('',
     (r'^damats/?$','damats.webapp.views.user_profile'),
+    (r'^damats/user?$','damats.webapp.views.user_view'),
+    (r'^damats/groups?$','damats.webapp.views.groups_view'),
+    (r'^damats/processes?$','damats.webapp.views.processes_view'),
+    (r'^damats/jobs$','damats.webapp.views.jobs_view'),
+    (r'^damats/jobs/([0-9A-Za-z][-_0-9A-Za-z]{1,255})$','damats.webapp.views.jobs_view'),
 )
 .
 wq
 END
 
+EOXSCONF="${INSTROOT}/${INSTANCE}/${INSTANCE}/conf/eoxserver.conf"
+sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
+$ a
+[damats]
+# DAMATS specific settings
+
+# default user identifier set in case of missing authentication subsystem.
+#default_user=<username>
+
+.
+wq
+END
+
 #-------------------------------------------------------------------------------
-# STEP 6: EOXSERVER INITIALISATION
+# STEP 7: EOXSERVER INITIALISATION
 info "Initializing EOxServer instance '${INSTANCE}' ..."
 
 # collect static files
@@ -375,6 +393,6 @@ sudo -u "$DAMATS_USER" python "$MNGCMD" syncdb --noinput
 #[ -f "$INITIAL_RANGETYPES" ] && sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load < "$INITIAL_RANGETYPES"
 
 #-------------------------------------------------------------------------------
-# STEP 6: FINAL WEB SERVER RESTART
+# STEP 8: FINAL WEB SERVER RESTART
 sudo systemctl restart httpd.service
 sudo systemctl status httpd.service
