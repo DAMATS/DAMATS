@@ -66,3 +66,6 @@ export EOXS_WSGI_PROCESS_GROUP=damats_eoxs_ows
 
 # location of the DAMATS Client home directory
 export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}
+
+# location of the installed DAMATS algorightms
+export DAMATS_ALGS_ROOT=${DAMATS_ALGS_ROOT:-$DAMATS_ROOT/algs}
