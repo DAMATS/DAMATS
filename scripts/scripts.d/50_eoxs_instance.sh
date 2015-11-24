@@ -152,7 +152,7 @@ do
         WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
         Header set Access-Control-Allow-Origin "*"
         Header set Access-Control-Allow-Headers Content-Type
-        Header set Access-Control-Allow-Methods "POST, GET"
+        Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
         #Require all granted
         AuthType basic
         AuthName "DAMATS server login"

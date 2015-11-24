@@ -54,7 +54,7 @@ do
         WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
         Header set Access-Control-Allow-Origin "*"
         Header set Access-Control-Allow-Headers Content-Type
-        Header set Access-Control-Allow-Methods "POST, GET"
+        Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
         Require all granted
         #AuthType basic
         #AuthName "DAMATS server login"
@@ -92,7 +92,7 @@ END
 
 # set the service url and log-file
 #/^[	 ]*logging_filename[	 ]*=/s;\(^[	 ]*logging_filename[	 ]*=\).*;\1${EOXSLOG};
-sudo -u "$DAMATS_USER" ex -V "$EOXSCONF" <<END
+sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
 /\[damats\]/
 g/^[\#\s]*default_user\s*=/d
 a
