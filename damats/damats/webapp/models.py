@@ -49,6 +49,9 @@ class Entity(models.Model):
     sources = models.ManyToManyField(
         'SourceSeries', blank=True, related_name='+readers'
     )
+    time_series_ro = models.ManyToManyField(
+        'TimeSeries', blank=True, related_name='+readers'
+    )
     processes = models.ManyToManyField(
         'Process', blank=True, related_name='+readers'
     )
@@ -130,7 +133,12 @@ class TimeSeries(models.Model):
     source = models.ForeignKey(SourceSeries, related_name='time_series')
     selection = models.TextField(null=True, blank=True)
     owner = models.ForeignKey(User, related_name='time_series')
-    readers = models.ManyToManyField(Entity, related_name='time_series_ro')
+
+    readers = models.ManyToManyField(
+        Entity, through=Entity.time_series_ro.through, blank=True,
+        related_name='+time_series_ro',
+    )
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
