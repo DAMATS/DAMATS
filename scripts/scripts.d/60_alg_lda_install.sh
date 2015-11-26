@@ -15,7 +15,7 @@ info "Installing LDA algorithm ... "
 [ -z "$DAMATS_USER" ] && error "Missing the required DAMATS_USER variable!"
 [ -z "$DAMATS_GROUP" ] && error "Missing the required DAMATS_GROUP variable!"
 
-SRC_FILE="$CONTRIB_DIR/damats-LDA-alg.zip"
+SRC_FILE="$CONTRIB_DIR/damats-LDA-alg-EOX.zip"
 ALG_DIR="$DAMATS_ALGS_ROOT/lda/"
 
 # create algorithms' directory if missing
@@ -37,6 +37,6 @@ unzip "$SRC_FILE"
 popd
 
 info "Installing dependencies ..."
-yum --assumeyes install scipy python-pillow gcc-c++ python-matplotlib
-yum --assumeyes install gcc-c++
-pip install -U scikit-learn
+yum --assumeyes install scikit-learn scipy python-pillow python-matplotlib
+#yum --assumeyes install gcc-c++
+#pip install -U scikit-learn
