@@ -26,21 +26,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #-------------------------------------------------------------------------------
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,unused-argument
 
-import json
+#import json
 from collections import OrderedDict
 
 #from django.conf import settings
-from django.http import HttpResponse
+#from django.http import HttpResponse
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 from damats.webapp.models import (
     User, SourceSeries, TimeSeries, Process, Job, #Result,
 )
+from damats.util.object_parser import (
+    Object, String,
+)
 from damats.util.view_utils import (
     HttpError, error_handler, method_allow, #ip_allow, ip_deny,
+    rest_json,
 )
 from damats.util.config import WEBAPP_CONFIG
 #from eoxserver.resources.coverages.models import (
@@ -54,21 +58,38 @@ JSON_OPTS = {'sort_keys': False, 'indent': 4, 'separators': (',', ': ')}
 JOB_STATUS_DICT = dict(Job.STATUS_CHOICES)
 
 #-------------------------------------------------------------------------------
-def get_authorised_user(request):
-    """ Check if request.META['REMOTE_USER'] is an authorided DAMATS user
-        and return the User object.
-    """
-    # NOTE: Default user is is read from the configuration.
-    uid = request.META.get('REMOTE_USER', WEBAPP_CONFIG.default_user)
-    try:
-        return (
-            User.objects
-            .prefetch_related('groups')
-            .get(identifier=uid, locked=False)
-        )
-    except ObjectDoesNotExist:
-        raise HttpError(401, "Unauthorised")
+# authentication decorator
 
+def authorisation(view):
+    """ Check if request.META['REMOTE_USER'] is an authorided DAMATS user
+        and the User object in the view parameters.
+    """
+    def _wrapper_(request, *args, **kwargs):
+        # NOTE: Default user is is read from the configuration.
+        uid = request.META.get('REMOTE_USER', WEBAPP_CONFIG.default_user)
+        try:
+            user = (
+                User.objects
+                .prefetch_related('groups')
+                .get(identifier=uid, locked=False)
+            )
+        except ObjectDoesNotExist:
+            raise HttpError(401, "Unauthorised")
+        return view(request, user, *args, **kwargs)
+    _wrapper_.__name__ = view.__name__
+    _wrapper_.__doc__ = view.__doc__
+    return _wrapper_
+
+
+#-------------------------------------------------------------------------------
+# Input parsers
+
+USER_PARSER = Object((
+    ('name', String),
+    ('description', String),
+))
+
+#-------------------------------------------------------------------------------
 def get_sources(user):
     """ Get query set of all SourceSeries objects accessible by the user. """
     id_list = [user.identifier] + [obj.identifier for obj in user.groups.all()]
@@ -117,13 +138,15 @@ def get_jobs(user, owned=True, read_only=True):
         return []
     return qset
 
-#-------------------------------------------------------------------------------
+
+# TEST VIEW - TO BE REMOVED
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def user_profile(request):
+@rest_json(JSON_OPTS, USER_PARSER)
+def user_profile(method, input_, user):
     """ DAMATS user profile view.
     """
-    user = get_authorised_user(request)
     user_id = user.identifier
     groups = [obj.identifier for obj in user.groups.all()]
     sources = [
@@ -157,7 +180,7 @@ def user_profile(request):
             ("is_owner", obj.owner.identifier == user_id),
         )) for obj in get_jobs(user)
     ]
-    response = OrderedDict((
+    return OrderedDict((
         ("identifier", user_id),
         ("name", user.name),
         ("description", user.description),
@@ -168,78 +191,69 @@ def user_profile(request):
         ("jobs", jobs),
     ))
 
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
 
 @error_handler
-@method_allow(['GET'])
-def user_view(request):
+@authorisation
+@method_allow(['GET', 'POST', 'PUT'])
+@rest_json(JSON_OPTS, USER_PARSER)
+def user_view(method, input_, user, **kwargs):
     """ User profile interface.
     """
-    user = get_authorised_user(request)
-    user_id = user.identifier
+    if method in ("POST", "PUT"):
+        if input_.has_key("name"):
+            user.name = input_.get("name", None) or None
+        if input_.has_key("description"):
+            user.description = input_.get("description", None) or None
+        user.save()
 
-    ##if request.method == "GET":
+    return {
+        "identifier": user.identifier,
+        "name": user.name or None,
+        "description": user.description or None,
+    }
 
-    response = OrderedDict((
-        ("identifier", user.identifier),
-        ("name", user.name),
-        ("description", user.description),
-    ))
-
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
 
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def groups_view(request):
+@rest_json(JSON_OPTS)
+def groups_view(method, input_, user):
     """ User groups interface.
     """
-    user = get_authorised_user(request)
-    user_id = user.identifier
-
-    ##if request.method == "GET":
-
     response = []
-    for group in user.groups.all():
-        response.append(OrderedDict((
-            ("identifier", user.identifier),
-            ("name", user.name),
-            ("description", user.description),
-        )))
+    for obj in user.groups.all():
+        response.append({
+            "identifier": obj.identifier,
+            "name": obj.name or None,
+            "description": obj.description or None,
+        })
+    return response
 
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
 
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def sources_view(request):
+@rest_json(JSON_OPTS)
+def sources_view(method, input_, user):
     """ List avaiable sources.
     """
-    user = get_authorised_user(request)
     response = []
     for obj in get_sources(user):
-        item = {
+        response.append({
             "identifier": obj.eoobj.identifier,
-        }
-        if obj.name:
-            item['name'] = obj.name
-        if obj.description:
-            item['description'] = obj.description
-        response.append(item)
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
+            "name": obj.name or None,
+            "description": obj.description or None,
+        })
+    return response
+
 
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def processes_view(request):
+@rest_json(JSON_OPTS)
+def processes_view(method, input_, user):
     """ List avaiable processes.
     """
-    user = get_authorised_user(request)
     response = []
     for obj in get_processes(user):
         item = {
@@ -250,37 +264,34 @@ def processes_view(request):
         if obj.description:
             item['description'] = obj.description
         response.append(item)
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
+    return response
+
 
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def time_series_view(request):
+@rest_json(JSON_OPTS)
+def time_series_view(method, input_, user):
     """ List avaiable time-series.
     """
-    user = get_authorised_user(request)
     response = []
     for obj in get_time_series(user):
-        item = {
+        response.append({
             "identifier": obj.eoobj.identifier,
+            "name": obj.name or None,
+            "description": obj.description or None,
             "read_only": obj.owner != user,
-        }
-        if obj.name:
-            item['name'] = obj.name
-        if obj.description:
-            item['description'] = obj.description
-        response.append(item)
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
+        })
+    return response
+
 
 @error_handler
+@authorisation
 @method_allow(['GET'])
-def jobs_view(request, identifier=None):
+@rest_json(JSON_OPTS)
+def jobs_view(method, input_, user, identifier=None):
     """ List avaiable time-series.
     """
-    user = get_authorised_user(request)
     response = []
     for obj in get_jobs(user):
         item = {
@@ -293,6 +304,4 @@ def jobs_view(request, identifier=None):
         if obj.description:
             item['description'] = obj.description
         response.append(item)
-    return HttpResponse(
-        json.dumps(response, **JSON_OPTS), content_type="application/json"
-    )
+    return response

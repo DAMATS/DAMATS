@@ -27,6 +27,7 @@
 #-------------------------------------------------------------------------------
 # pylint: disable=missing-docstring
 
+import json
 import sys
 import ipaddr
 import traceback
@@ -46,52 +47,75 @@ class HttpError(Exception):
 
 def error_handler(view):
     """ error handling decorator """
-    def _wrapper_(request):
+    def _wrapper_(request, *args, **kwargs):
         try:
-            return view(request)
+            return view(request, *args, **kwargs)
         except HttpError as exc:
-            response = HttpResponse(unicode(exc), content_type="text/plain")
-            response.status_code = exc.status
+            response = HttpResponse(
+                unicode(exc), content_type="text/plain", status=exc.status
+            )
         except Exception as exc:
             message = "Internal Server Error"
             trace = traceback.format_exc()
             sys.stderr.write(trace)
             if settings.DEBUG:
                 message = "%s\n\n%s" % (message, trace)
-            response = HttpResponse(message, content_type="text/plain")
-            response.status_code = 500
+            response = HttpResponse(
+                message, content_type="text/plain", status=500
+            )
         return response
     _wrapper_.__name__ = view.__name__
     _wrapper_.__doc__ = view.__doc__
     return _wrapper_
 
 
-def method_allow(method_list):
-    """ reject non-supported HTTP methods """
+def option_bouncer(view):
+    """ make success response to OPTIONS request """
+    def _wrapper_(reques, *args, **kwargs):
+        if request.method == "OPTIONS":
+            return HttpResponse("", content_type="text/plain")
+        else:
+            return view(reques, *args, **kwargs)
+    _wrapper_.__name__ = view.__name__
+    _wrapper_.__doc__ = view.__doc__
+    return _wrapper_
+
+
+def method_allow(allowed_methods, handle_options=True):
+    """ Reject non-supported HTTP methods.
+    By default the OPTIONS method is handled responding with
+    the list of the supported methods.
+    """
+    allowed_methods = tuple(allowed_methods)
     def _wrap_(view):
-        def _wrapper_(request):
-            if request.method not in method_list:
-                raise HttpError(
-                    405, "Error: Method not supported! "
-                    "METHOD='%s'" % request.method
+        def _wrapper_(request, *args, **kwargs):
+            if handle_options and request.method == "OPTIONS":
+                response = HttpResponse("")
+                response['Allow'] = ", ".join(("OPTIONS",) + allowed_methods)
+            elif request.method not in allowed_methods:
+                response = HttpResponse(
+                    "Method not allowed", content_type="text/plain", status=405
                 )
-            return view(request)
+                response['Allow'] = ", ".join(("OPTIONS",) + allowed_methods)
+                return response
+            else:
+                response = view(request, *args, **kwargs)
+            return response
         _wrapper_.__name__ = view.__name__
         _wrapper_.__doc__ = view.__doc__
         return _wrapper_
     return _wrap_
 
-
 def ip_deny(ip_list):
     """ IP black-list restricted access """
     def _wrap_(view):
-        def _wrapper_(request):
+        def _wrapper_(request, *args, **kwargs):
             # get request source address and compare it with the forbiden ones
             ip_src = ipaddr.IPAddress(request.META['REMOTE_ADDR'])
             for ip_ in ip_list:
                 if ip_src in ipaddr.IPNetwork(ip_):
                     raise HttpError(403, "Forbiden!")
-            return view(request)
+            return view(request, *args, **kwargs)
         _wrapper_.__name__ = view.__name__
         _wrapper_.__doc__ = view.__doc__
         return _wrapper_
@@ -101,7 +125,7 @@ def ip_deny(ip_list):
 def ip_allow(ip_list):
     """ IP white-list restricted access """
     def _wrap_(view):
-        def _wrapper_(request):
+        def _wrapper_(request, *args, **kwargs):
             # get request source address and compare it with the allowed ones
             ip_src = ipaddr.IPAddress(request.META['REMOTE_ADDR'])
             for ip_ in ip_list:
@@ -109,7 +133,45 @@ def ip_allow(ip_list):
                     break
             else:
                 raise HttpError(403, "Forbiden!")
-            return view(request)
+            return view(request, *args, **kwargs)
+        _wrapper_.__name__ = view.__name__
+        _wrapper_.__doc__ = view.__doc__
+        return _wrapper_
+    return _wrap_
+
+def rest_json(json_options=None, validation_parser=None):
+    """ JSON REST decorator serialising output object and parsing possible
+        inputs.
+
+        The wrapped view has following interface:
+
+          view(method, input, *args, **kwargs)
+
+        The view gets the method as the first argument.
+        The second argument is the parsed input. If provided, the
+        parsed JSON object is passed through the `parse()` method
+        of the `validation_parser`.
+        The kwargs contain the original request object if needed.
+        The response object is always serialized to JSON.
+    """
+    json_options = json_options or {}
+    def _wrap_(view):
+        def _wrapper_(request, *args, **kwargs):
+            try:
+                if request.body:
+                    input_ = json.loads(request.body)
+                    if parser:
+                        input_ = validation_parser.parse(input_)
+                else:
+                    input_ = None
+            except (TypeError, ValueError):
+                raise HttpError(400, "Bad Request")
+            kwargs['request'] = request
+            response = view(request.method, input_, *args, **kwargs)
+            return HttpResponse(
+                json.dumps(response, **json_options),
+                content_type="application/json"
+            )
         _wrapper_.__name__ = view.__name__
         _wrapper_.__doc__ = view.__doc__
         return _wrapper_
