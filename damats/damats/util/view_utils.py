@@ -69,18 +69,6 @@ def error_handler(view):
     return _wrapper_
 
 
-def option_bouncer(view):
-    """ make success response to OPTIONS request """
-    def _wrapper_(reques, *args, **kwargs):
-        if request.method == "OPTIONS":
-            return HttpResponse("", content_type="text/plain")
-        else:
-            return view(reques, *args, **kwargs)
-    _wrapper_.__name__ = view.__name__
-    _wrapper_.__doc__ = view.__doc__
-    return _wrapper_
-
-
 def method_allow(allowed_methods, handle_options=True):
     """ Reject non-supported HTTP methods.
     By default the OPTIONS method is handled responding with
@@ -105,6 +93,41 @@ def method_allow(allowed_methods, handle_options=True):
         _wrapper_.__doc__ = view.__doc__
         return _wrapper_
     return _wrap_
+
+
+def method_allow_conditional(allowed_methods_true, allowed_methods_false,
+                             condition, handle_options=True):
+    """ Reject non-supported HTTP methods.
+    The list of the supported options is conditional based on the response
+    of the is_read_only method.
+    By default the OPTIONS method is handled responding with
+    the list of the supported methods.
+    """
+    allowed_methods_true = tuple(allowed_methods_true)
+    allowed_methods_false = tuple(allowed_methods_false)
+    def _wrap_(view):
+        def _wrapper_(request, *args, **kwargs):
+            if condition(request, *args, **kwargs):
+                allowed_methods = allowed_methods_true
+            else:
+                allowed_methods = allowed_methods_false
+            if handle_options and request.method == "OPTIONS":
+                response = HttpResponse("")
+                response['Allow'] = ", ".join(("OPTIONS",) + allowed_methods)
+            elif request.method not in allowed_methods:
+                response = HttpResponse(
+                    "Method not allowed", content_type="text/plain", status=405
+                )
+                response['Allow'] = ", ".join(("OPTIONS",) + allowed_methods)
+                return response
+            else:
+                response = view(request, *args, **kwargs)
+            return response
+        _wrapper_.__name__ = view.__name__
+        _wrapper_.__doc__ = view.__doc__
+        return _wrapper_
+    return _wrap_
+
 
 def ip_deny(ip_list):
     """ IP black-list restricted access """
@@ -139,7 +162,8 @@ def ip_allow(ip_list):
         return _wrapper_
     return _wrap_
 
-def rest_json(json_options=None, validation_parser=None):
+
+def rest_json(json_options=None, validation_parser=None, defauts=None):
     """ JSON REST decorator serialising output object and parsing possible
         inputs.
 
@@ -155,23 +179,34 @@ def rest_json(json_options=None, validation_parser=None):
         The response object is always serialized to JSON.
     """
     json_options = json_options or {}
+    defaults = defauts or {}
     def _wrap_(view):
         def _wrapper_(request, *args, **kwargs):
             try:
                 if request.body:
-                    input_ = json.loads(request.body)
-                    if parser:
-                        input_ = validation_parser.parse(input_)
+                    obj_input = json.loads(request.body)
+                    if validation_parser:
+                        obj_input = validation_parser.parse(obj_input)
+                    if defaults: # fill the defaults
+                        tmp = dict(defaults)
+                        tmp.update(obj_input)
+                        obj_input = tmp
                 else:
-                    input_ = None
+                    obj_input = None
             except (TypeError, ValueError):
                 raise HttpError(400, "Bad Request")
             kwargs['request'] = request
-            response = view(request.method, input_, *args, **kwargs)
-            return HttpResponse(
-                json.dumps(response, **json_options),
-                content_type="application/json"
+            status, obj_output = view(
+                request.method, obj_input, *args, **kwargs
             )
+            if obj_output is None:
+                response = HttpResponse("", status=status)
+            else:
+                response = HttpResponse(
+                    json.dumps(obj_output, **json_options),
+                    status=status, content_type="application/json"
+                )
+            return response
         _wrapper_.__name__ = view.__name__
         _wrapper_.__doc__ = view.__doc__
         return _wrapper_
