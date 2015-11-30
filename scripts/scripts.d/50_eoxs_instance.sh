@@ -360,6 +360,7 @@ urlpatterns += patterns('',
     (r'^damats/processes?$', 'damats.webapp.views.processes_view'),
     (r'^damats/sources$', 'damats.webapp.views.sources_view'),
     (r'^damats/time_series$', 'damats.webapp.views.time_series_view'),
+    (r'^damats/time_series/([0-9A-Za-z][-_0-9A-Za-z]{1,255})$', 'damats.webapp.views.time_series_item_view'),
     (r'^damats/jobs$', 'damats.webapp.views.jobs_view'),
     (r'^damats/jobs/([0-9A-Za-z][-_0-9A-Za-z]{1,255})$', 'damats.webapp.views.jobs_view'),
 )
