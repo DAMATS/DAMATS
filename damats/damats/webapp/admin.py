@@ -155,6 +155,7 @@ admin.site.register(models.SourceSeries, SourceSeriesAdmin)
 class TimeSeriesAdmin(admin.ModelAdmin):
     model = models.TimeSeries
     fields = (
+        'locked',
         'name',
         'description',
         'source',

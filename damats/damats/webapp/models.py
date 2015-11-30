@@ -133,6 +133,7 @@ class TimeSeries(models.Model):
     source = models.ForeignKey(SourceSeries, related_name='time_series')
     selection = models.TextField(null=True, blank=True)
     owner = models.ForeignKey(User, related_name='time_series')
+    locked = models.BooleanField(default=False)
 
     readers = models.ManyToManyField(
         Entity, through=Entity.time_series_ro.through, blank=True,
