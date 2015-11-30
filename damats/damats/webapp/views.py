@@ -28,98 +28,37 @@
 #-------------------------------------------------------------------------------
 # pylint: disable=missing-docstring,unused-argument
 
-#import json
-from collections import OrderedDict
-
 #from django.conf import settings
 #from django.http import HttpResponse
+#from django.db import transaction
 from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
+#from django.core.exceptions import ObjectDoesNotExist
 
 from damats.webapp.models import (
-    User, SourceSeries, TimeSeries, Process, Job, #Result,
-)
-from damats.util.object_parser import (
-    Object, String,
+   Process, Job, #Result,
 )
 from damats.util.view_utils import (
-    HttpError, error_handler, method_allow, #ip_allow, ip_deny,
+    HttpError, error_handler, method_allow, method_allow_conditional,
     rest_json,
 )
 from damats.util.config import WEBAPP_CONFIG
-#from eoxserver.resources.coverages.models import (
-#    RectifiedDataset, ReferenceableDataset
-#)
 
-# JSON formating options
-#JSON_OPTS={}
-JSON_OPTS = {'sort_keys': False, 'indent': 4, 'separators': (',', ': ')}
+from damats.webapp.views_common import authorisation, JSON_OPTS
+from damats.webapp.views_users import (
+    user_view, groups_view, users_all_view, groups_all_view,
+)
+from damats.webapp.views_time_series import (
+    sources_view, time_series_view, time_series_item_view,
+)
 
 JOB_STATUS_DICT = dict(Job.STATUS_CHOICES)
 
 #-------------------------------------------------------------------------------
-# authentication decorator
-
-def authorisation(view):
-    """ Check if request.META['REMOTE_USER'] is an authorided DAMATS user
-        and the User object in the view parameters.
-    """
-    def _wrapper_(request, *args, **kwargs):
-        # NOTE: Default user is is read from the configuration.
-        uid = request.META.get('REMOTE_USER', WEBAPP_CONFIG.default_user)
-        try:
-            user = (
-                User.objects
-                .prefetch_related('groups')
-                .get(identifier=uid, locked=False)
-            )
-        except ObjectDoesNotExist:
-            raise HttpError(401, "Unauthorised")
-        return view(request, user, *args, **kwargs)
-    _wrapper_.__name__ = view.__name__
-    _wrapper_.__doc__ = view.__doc__
-    return _wrapper_
-
-
-#-------------------------------------------------------------------------------
-# Input parsers
-
-USER_PARSER = Object((
-    ('name', String),
-    ('description', String),
-))
-
-#-------------------------------------------------------------------------------
-def get_sources(user):
-    """ Get query set of all SourceSeries objects accessible by the user. """
-    id_list = [user.identifier] + [obj.identifier for obj in user.groups.all()]
-    return (
-        SourceSeries.objects
-        .select_related('eoobj')
-        .filter(readers__identifier__in=id_list)
-    )
 
 def get_processes(user):
     """ Get query set of all Process objects accessible by the user. """
     id_list = [user.identifier] + [obj.identifier for obj in user.groups.all()]
     return Process.objects.filter(readers__identifier__in=id_list)
-
-def get_time_series(user, owned=True, read_only=True):
-    """ Get query set of TimeSeries objects accessible by the user.
-        By default both owned and read-only (items shared by a different users)
-        are returned.
-    """
-    id_list = [user.identifier] + [obj.identifier for obj in user.groups.all()]
-    qset = TimeSeries.objects.select_related('eoobj', 'owner')
-    if owned and read_only:
-        qset = qset.filter(Q(owner=user) | Q(readers__identifier__in=id_list))
-    elif owned:
-        qset = qset.filter(owner=user)
-    elif read_only:
-        qset = qset.filter(readers__identifier__in=id_list)
-    else: #nothing selected
-        return []
-    return qset
 
 def get_jobs(user, owned=True, read_only=True):
     """ Get query set of Job objects accessible by the user.
@@ -138,120 +77,66 @@ def get_jobs(user, owned=True, read_only=True):
         return []
     return qset
 
+#-------------------------------------------------------------------------------
 
 # TEST VIEW - TO BE REMOVED
-@error_handler
-@authorisation
-@method_allow(['GET'])
-@rest_json(JSON_OPTS, USER_PARSER)
-def user_profile(method, input_, user):
-    """ DAMATS user profile view.
-    """
-    user_id = user.identifier
-    groups = [obj.identifier for obj in user.groups.all()]
-    sources = [
-        OrderedDict((
-            ("identifier", obj.eoobj.identifier),
-            ("name", obj.name),
-            ("description", obj.description),
-        )) for obj in get_sources(user)
-    ]
-    time_series = [
-        OrderedDict((
-            ("identifier", obj.eoobj.identifier),
-            ("name", obj.name),
-            ("description", obj.description),
-            ("is_owner", obj.owner.identifier == user_id),
-        )) for obj in get_time_series(user)
-    ]
-    processes = [
-        OrderedDict((
-            ("identifier", obj.identifier),
-            ("name", obj.name),
-            ("description", obj.description),
-        )) for obj in get_processes(user)
-    ]
-    jobs = [
-        OrderedDict((
-            ("identifier", obj.identifier),
-            ("name", obj.name),
-            ("description", obj.description),
-            ("status", JOB_STATUS_DICT[obj.status]),
-            ("is_owner", obj.owner.identifier == user_id),
-        )) for obj in get_jobs(user)
-    ]
-    return OrderedDict((
-        ("identifier", user_id),
-        ("name", user.name),
-        ("description", user.description),
-        ("groups", groups),
-        ("sources", sources),
-        ("processes", processes),
-        ("time_series", time_series),
-        ("jobs", jobs),
-    ))
-
-
-@error_handler
-@authorisation
-@method_allow(['GET', 'POST', 'PUT'])
-@rest_json(JSON_OPTS, USER_PARSER)
-def user_view(method, input_, user, **kwargs):
-    """ User profile interface.
-    """
-    if method in ("POST", "PUT"):
-        if input_.has_key("name"):
-            user.name = input_.get("name", None) or None
-        if input_.has_key("description"):
-            user.description = input_.get("description", None) or None
-        user.save()
-
-    return {
-        "identifier": user.identifier,
-        "name": user.name or None,
-        "description": user.description or None,
-    }
+#@error_handler
+#@authorisation
+#@method_allow(['GET'])
+#@rest_json(JSON_OPTS)
+#def user_profile(method, input_, user, **kwargs):
+#    """ DAMATS user profile view.
+#    """
+#    user_id = user.identifier
+#    groups = [obj.identifier for obj in user.groups.all()]
+#    sources = [
+#        OrderedDict((
+#            ("identifier", obj.eoobj.identifier),
+#            ("name", obj.name),
+#            ("description", obj.description),
+#        )) for obj in get_sources(user)
+#    ]
+#    time_series = [
+#        OrderedDict((
+#            ("identifier", obj.eoobj.identifier),
+#            ("name", obj.name),
+#            ("description", obj.description),
+#            ("is_owner", obj.owner.identifier == user_id),
+#        )) for obj in get_time_series(user)
+#    ]
+#    processes = [
+#        OrderedDict((
+#            ("identifier", obj.identifier),
+#            ("name", obj.name),
+#            ("description", obj.description),
+#        )) for obj in get_processes(user)
+#    ]
+#    jobs = [
+#        OrderedDict((
+#            ("identifier", obj.identifier),
+#            ("name", obj.name),
+#            ("description", obj.description),
+#            ("status", JOB_STATUS_DICT[obj.status]),
+#            ("is_owner", obj.owner.identifier == user_id),
+#        )) for obj in get_jobs(user)
+#    ]
+#    return OrderedDict((
+#        ("identifier", user_id),
+#        ("name", user.name),
+#        ("description", user.description),
+#        ("groups", groups),
+#        ("sources", sources),
+#        ("processes", processes),
+#        ("time_series", time_series),
+#        ("jobs", jobs),
+#    ))
 
 
 @error_handler
 @authorisation
 @method_allow(['GET'])
 @rest_json(JSON_OPTS)
-def groups_view(method, input_, user):
-    """ User groups interface.
-    """
-    response = []
-    for obj in user.groups.all():
-        response.append({
-            "identifier": obj.identifier,
-            "name": obj.name or None,
-            "description": obj.description or None,
-        })
-    return response
-
-
-@error_handler
-@authorisation
-@method_allow(['GET'])
-@rest_json(JSON_OPTS)
-def sources_view(method, input_, user):
-    """ List avaiable sources.
-    """
-    response = []
-    for obj in get_sources(user):
-        response.append({
-            "identifier": obj.eoobj.identifier,
-            "name": obj.name or None,
-            "description": obj.description or None,
-        })
-    return response
-
-
-@error_handler
-@authorisation
-@method_allow(['GET'])
-@rest_json(JSON_OPTS)
-def processes_view(method, input_, user):
+def processes_view(method, input_, user, **kwargs):
     """ List avaiable processes.
     """
     response = []
@@ -264,32 +149,13 @@ def processes_view(method, input_, user):
         if obj.description:
             item['description'] = obj.description
         response.append(item)
-    return response
-
-
-@error_handler
-@authorisation
-@method_allow(['GET'])
-@rest_json(JSON_OPTS)
-def time_series_view(method, input_, user):
-    """ List avaiable time-series.
-    """
-    response = []
-    for obj in get_time_series(user):
-        response.append({
-            "identifier": obj.eoobj.identifier,
-            "name": obj.name or None,
-            "description": obj.description or None,
-            "read_only": obj.owner != user,
-        })
-    return response
-
+    return 200, response
 
 @error_handler
 @authorisation
 @method_allow(['GET'])
 @rest_json(JSON_OPTS)
-def jobs_view(method, input_, user, identifier=None):
+def jobs_view(method, input_, user, identifier=None, **kwargs):
     """ List avaiable time-series.
     """
     response = []
@@ -304,4 +170,4 @@ def jobs_view(method, input_, user, identifier=None):
         if obj.description:
             item['description'] = obj.description
         response.append(item)
-    return response
+    return 200, response
