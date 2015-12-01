@@ -37,10 +37,11 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 from damats.webapp.models import SourceSeries, TimeSeries
-from eoxserver.resources.coverages.models import DatasetSeries
-#from damats.util.object_parser import (
-#    Object, String,
-#)
+from eoxserver.resources.coverages.models import DatasetSeries, Coverage
+from eoxserver.core.util.timetools import isoformat
+from damats.util.object_parser import (
+    Object, String, Float, DateTime, Bool, Null,
+)
 from damats.util.view_utils import (
     HttpError, error_handler, method_allow, method_allow_conditional,
     rest_json,
@@ -48,10 +49,32 @@ from damats.util.view_utils import (
 from damats.webapp.views_common import authorisation, JSON_OPTS
 
 #-------------------------------------------------------------------------------
+# parsers
+
+SITS_PARSER = Object((
+    ('source', String),
+    ('locked', Bool, False, False),
+    ('name', (String, Null), False, None),
+    ('description', (String, Null), False, None),
+    ('selection', Object((
+        ('aoi', Object((
+            ('left', Float),
+            ('right', Float),
+            ('bottom', Float),
+            ('top', Float),
+        ))),
+        ('toi', Object((
+            ('start', DateTime),
+            ('end', DateTime),
+        ))),
+    ))),
+))
+
+#-------------------------------------------------------------------------------
 # quaries
 
 def get_sources(user):
-    """ Get query set of all SourceSeries objects accessible by the user. """
+    """ Get a query set of all SourceSeries objects accessible by the user. """
     id_list = [user.identifier] + [obj.identifier for obj in user.groups.all()]
     return (
         SourceSeries.objects
@@ -60,7 +83,7 @@ def get_sources(user):
     )
 
 def get_time_series(user, owned=True, read_only=True):
-    """ Get query set of TimeSeries objects accessible by the user.
+    """ Get a query set of TimeSeries objects accessible by the user.
         By default both owned and read-only (items shared by a different users)
         are returned.
     """
@@ -78,13 +101,6 @@ def get_time_series(user, owned=True, read_only=True):
         return []
     return qset
 
-def get_collection(identifier):
-    """ Get an existing DatastSeries database object for given identifier. """
-    try:
-        return DatasetSeries.objects.get(identifier=identifier)
-    except ObjectDoesNotExist:
-        raise ValueError("Invalid EOObject identifier %r!" % identifier)
-
 def is_time_series_owned(request, user, identifier):
     """ Return true if the time_series object is owned by the user. """
     try:
@@ -92,6 +108,29 @@ def is_time_series_owned(request, user, identifier):
     except ObjectDoesNotExist:
         raise HttpError(404, "Not found")
     return obj.owner == user
+
+def get_collection(identifier):
+    """ Get an existing DatastSeries database object for given identifier. """
+    try:
+        return DatasetSeries.objects.get(identifier=identifier)
+    except ObjectDoesNotExist:
+        raise ValueError("Invalid EOObject identifier %r!" % identifier)
+
+def get_coverages(eoobj):
+    """ Get a query set of all Coverages held by given DatastSeries object.
+    """
+    def _get_children_ids(eoobj):
+        """ recursive dataset series lookup """
+        qset = (
+            eoobj.cast().eo_objects
+            .filter(real_content_type=eoobj.real_content_type)
+        )
+        id_list = [eoobj.id]
+        for child_eoobj in qset:
+            id_list.extend(_get_children_ids(child_eoobj))
+        return id_list
+
+    return Coverage.objects.filter(collections__id__in=_get_children_ids(eoobj))
 
 #-------------------------------------------------------------------------------
 # model instance serialization
@@ -123,6 +162,15 @@ def time_series_serialize(obj, user, extras=None):
         "selection": json.loads(obj.selection or '{}'),
     })
     return response
+
+COVERAGE_KEYS = ('id', 't0', 't1', 'x0', 'x1', 'y0', 'y1')
+def coverage_serialize(obj):
+    """ Serialize Coverage object to a JSON serializable dictionary """
+    lon_min, lat_min, lon_max, lat_max = obj.extent_wgs84
+    return dict(zip(COVERAGE_KEYS, (
+        obj.identifier, isoformat(obj.begin_time), isoformat(obj.end_time),
+        lon_min, lon_max, lat_min, lat_max,
+    )))
 
 #-------------------------------------------------------------------------------
 # object creation
@@ -169,11 +217,27 @@ def sources_view(method, input_, user, **kwargs):
     """
     return 200, [source_serialize(obj) for obj in get_sources(user)]
 
+@error_handler
+@authorisation
+@method_allow(['GET'])
+@rest_json(JSON_OPTS)
+def sources_item_view(method, input_, user, identifier, **kwargs):
+    """ List items of the requested source time series.
+    """
+    try:
+        obj = get_sources(user).get(eoobj__identifier=identifier)
+    except ObjectDoesNotExist:
+        raise HttpError(404, "Not found")
+
+    return 200, [
+        coverage_serialize(cov)
+        for cov in get_coverages(obj.eoobj).order_by('begin_time', 'end_time')
+    ]
 
 @error_handler
 @authorisation
 @method_allow(['GET', 'POST'])
-@rest_json(JSON_OPTS)
+@rest_json(JSON_OPTS, SITS_PARSER)
 def time_series_view(method, input_, user, **kwargs):
     """ List avaiable time-series.
     """
@@ -184,7 +248,7 @@ def time_series_view(method, input_, user, **kwargs):
     return 200, [
         time_series_serialize(obj, user)
         for obj in get_time_series(user).order_by('created')
-    ] 
+    ]
 
 @error_handler
 @authorisation
@@ -202,4 +266,7 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
         obj.delete()
         return 204, None
 
-    return 200, time_series_serialize(obj, user)
+    return 200, [
+        coverage_serialize(cov)
+        for cov in get_coverages(obj.eoobj).order_by('begin_time', 'end_time')
+    ]

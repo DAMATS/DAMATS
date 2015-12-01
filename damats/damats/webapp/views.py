@@ -48,7 +48,7 @@ from damats.webapp.views_users import (
     user_view, groups_view, users_all_view, groups_all_view,
 )
 from damats.webapp.views_time_series import (
-    sources_view, time_series_view, time_series_item_view,
+    sources_view, sources_item_view, time_series_view, time_series_item_view,
 )
 
 JOB_STATUS_DICT = dict(Job.STATUS_CHOICES)
