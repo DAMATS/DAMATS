@@ -28,6 +28,9 @@
 # THE SOFTWARE.
 #-------------------------------------------------------------------------------
 
+from datetime import datetime
+import _strptime # DO NOT REMOVE!
+
 def _parse(parsers, value):
     """ Parse value using single (one object) or multiple parsers
     (sequence or iterable).
@@ -36,11 +39,11 @@ def _parse(parsers, value):
     try:
         for parser in parsers:
             try:
-                return parser, value
+                return parser.parse(value)
             except (TypeError, ValueError) as exc:
                 message = str(exc)
     except TypeError:
-        return parsers(value)
+        return parsers.parse(value)
     raise ValueError(message)
 
 class Null(object):
@@ -49,8 +52,36 @@ class Null(object):
     def parse(value):
         """ parse null value """
         if value is not None:
-            raise ValueError("Not a null literal!")
+            raise ValueError("Not a null value!")
         return value
+
+class Bool(object):
+    """ String parser. """
+    @staticmethod
+    def parse(value):
+        """ parse string value """
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, basestring):
+            if value.lower() in ("true", "yes", "1"):
+                return True
+            if value.lower() in ("false", "no", "0"):
+                return False
+        raise ValueError("Not a boolean value!")
+
+class Float(object):
+    """ String parser. """
+    @staticmethod
+    def parse(value):
+        """ parse float value """
+        return float(value)
+
+class Int(object):
+    """ String parser. """
+    @staticmethod
+    def parse(value):
+        """ parse float value """
+        return int(value)
 
 class String(object):
     """ String parser. """
@@ -58,7 +89,22 @@ class String(object):
     def parse(value):
         """ parse string value """
         if not isinstance(value, basestring):
-            raise ValueError("Not a string literal!")
+            raise ValueError("Not a string value!")
+        return value
+
+class DateTime(object):
+    """ time-stamp parser. """
+    @staticmethod
+    def parse(value):
+        """ parse an ISO 8601 UTC time-stamp value """
+        value = String.parse(value)
+        # NOTE: The string input must me always zulu UTC time.
+        try:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+
         return value
 
 class Array(object):
@@ -74,16 +120,35 @@ class Array(object):
         return output
 
 class Object(object):
-    """ Object parser. """
+    """ Object parser.
+
+        The schema is a list of object attribute parsers.
+        Mandatory attribute parser item:
+            (<key>, <parser>, True)
+            (<key>, (<parser>, <parser>, ...), True)
+
+        Optional attribute parser item with a default value:
+            (<key>, <parser>, False, <default>)
+            (<key>, (<parser>, <parser>, ...), False, <default>)
+
+        Optional attribute parser item without a default value:
+            (<key>, <parser>)
+            (<key>, (<parser>, <parser>, ...))
+            (<key>, <parser>, None)
+            (<key>, (<parser>, <parser>, ...), None)
+    """
     def __init__(self, schema):
         if isinstance(schema, dict):
             schema = schema.items()
-        self.schema = schema
+        # fill the default required field
+        self.schema = [(tuple(item) + (None, None))[:4] for item in schema]
 
     def parse(self, obj):
         """ parse object """
         output = {}
-        for key, parser in self.schema:
-            if obj.has_key(key):
-                output[key] = _parse(parser.parse, obj[key])
+        for key, parser, required, default in self.schema:
+            if required or obj.has_key(key):
+                output[key] = _parse(parser, obj[key])
+            elif required is not None:
+                output[key] = default
         return output

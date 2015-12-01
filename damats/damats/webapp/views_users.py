@@ -29,7 +29,7 @@
 # pylint: disable=missing-docstring,unused-argument
 
 from damats.webapp.models import User, Group
-from damats.util.object_parser import Object, String
+from damats.util.object_parser import Object, String, Null
 from damats.util.view_utils import (
     error_handler, method_allow, rest_json,
 )
@@ -39,8 +39,8 @@ from damats.webapp.views_common import authorisation, JSON_OPTS
 # Input parsers
 
 USER_PARSER = Object((
-    ('name', String),
-    ('description', String),
+    ('name', (String, Null)),
+    ('description', (String, Null)),
 ))
 
 #-------------------------------------------------------------------------------
