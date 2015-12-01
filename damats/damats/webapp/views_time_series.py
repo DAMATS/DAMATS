@@ -30,15 +30,19 @@
 
 import json
 import uuid
+from datetime import datetime
+
 #from django.conf import settings
 #from django.http import HttpResponse
 from django.db import transaction
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.gis.geos import Polygon
+
+from eoxserver.core.util.timetools import isoformat
+from eoxserver.resources.coverages.models import DatasetSeries, Coverage
 
 from damats.webapp.models import SourceSeries, TimeSeries
-from eoxserver.resources.coverages.models import DatasetSeries, Coverage
-from eoxserver.core.util.timetools import isoformat
 from damats.util.object_parser import (
     Object, String, Float, DateTime, Bool, Null,
 )
@@ -48,26 +52,52 @@ from damats.util.view_utils import (
 )
 from damats.webapp.views_common import authorisation, JSON_OPTS
 
+TOLERANCE = 0.0
+
 #-------------------------------------------------------------------------------
-# parsers
+
+def pack_datetime(obj):
+    if isinstance(obj, datetime):
+        return "%sZ" % obj.isoformat('T')
+    elif not isinstance(obj, dict):
+        return obj
+    else:
+        return dict((key, pack_datetime(val)) for key, val in obj.iteritems())
+
+SELECTION_PARSER = Object((
+    ('aoi', Object((
+        ('left', Float, True),
+        ('right', Float, True),
+        ('bottom', Float, True),
+        ('top', Float, True),
+    ))),
+    ('toi', Object((
+        ('start', DateTime, True),
+        ('end', DateTime, True),
+    ))),
+))
 
 SITS_PARSER = Object((
-    ('source', String),
+    ('source', String, True),
     ('locked', Bool, False, False),
     ('name', (String, Null), False, None),
     ('description', (String, Null), False, None),
     ('selection', Object((
         ('aoi', Object((
-            ('left', Float),
-            ('right', Float),
-            ('bottom', Float),
-            ('top', Float),
-        ))),
+            ('left', Float, True),
+            ('right', Float, True),
+            ('bottom', Float, True),
+            ('top', Float, True),
+        )), True),
         ('toi', Object((
-            ('start', DateTime),
-            ('end', DateTime),
-        ))),
-    ))),
+            ('start', DateTime, True),
+            ('end', DateTime, True),
+        )), True),
+    )), True),
+))
+
+COVERAGE_PARSER = Object((
+    ('identifier', String),
 ))
 
 #-------------------------------------------------------------------------------
@@ -101,7 +131,7 @@ def get_time_series(user, owned=True, read_only=True):
         return []
     return qset
 
-def is_time_series_owned(request, user, identifier):
+def is_time_series_owned(request, user, identifier, *args, **kwargs):
     """ Return true if the time_series object is owned by the user. """
     try:
         obj = get_time_series(user).get(eoobj__identifier=identifier)
@@ -172,6 +202,11 @@ def coverage_serialize(obj):
         lon_min, lon_max, lat_min, lat_max,
     )))
 
+def coverage_serialize_extra(obj, extra):
+    """ Serialize Coverage object to a JSON serializable dictionary """
+    tmp = coverage_serialize(obj)
+    tmp.update(extra)
+    return tmp
 #-------------------------------------------------------------------------------
 # object creation
 
@@ -184,6 +219,10 @@ def create_collection(identifier):
 @transaction.atomic
 def create_time_series(input_, user):
     """ Handle create requests and create a new TimeSeries object. """
+
+    def pack_selection(selection):
+        """ pack selection object """
+
     # First check the source.
     try:
         source = get_sources(user).get(
@@ -200,9 +239,35 @@ def create_time_series(input_, user):
     obj.name = input_.get('name', None) or None
     obj.description = input_.get('description', None) or None
     obj.source = source
-    obj.eoobj = create_collection("sits-" + uuid.uuid4().hex)
-    obj.selection = json.dumps(input_.get('obj.selection', {}) or {})
+    obj.eoobj = target = create_collection("sits-" + uuid.uuid4().hex)
+    obj.selection = json.dumps(
+        pack_datetime(input_.get('selection', {}) or {})
+    )
     obj.save()
+
+    # link matching coverages
+    # TODO: dateline handling
+    # TODO: tune the tolerance
+
+    aoi = input_['selection']['aoi']
+    toi = input_['selection']['toi']
+
+    bbox = (
+        aoi['left'] - TOLERANCE,
+        aoi['bottom'] - TOLERANCE,
+        aoi['right'] + TOLERANCE,
+        aoi['top'] + TOLERANCE,
+    )
+    bbox_geom = Polygon.from_bbox(bbox)
+
+    coverages = get_coverages(source.eoobj).filter(
+        begin_time__lte=toi['end'], end_time__gte=toi['start'],
+        footprint__intersects=bbox_geom,
+        #footprint__within=bbox_geom,
+    )
+    for eoobj in coverages:
+        target.insert(eoobj)
+
     return 200, time_series_serialize(obj, user)
 
 #-------------------------------------------------------------------------------
@@ -236,6 +301,21 @@ def sources_item_view(method, input_, user, identifier, **kwargs):
 
 @error_handler
 @authorisation
+@method_allow(['GET'])
+@rest_json(JSON_OPTS)
+def sources_coverage_view(method, input_, user, identifier, coverage, **kwargs):
+    """ View a requested item of the source time series.
+    """
+    try:
+        obj = get_sources(user).get(eoobj__identifier=identifier)
+        cov = get_coverages(obj.eoobj).get(identifier=coverage)
+    except ObjectDoesNotExist:
+        raise HttpError(404, "Not found")
+
+    return 200, coverage_serialize(cov)
+
+@error_handler
+@authorisation
 @method_allow(['GET', 'POST'])
 @rest_json(JSON_OPTS, SITS_PARSER)
 def time_series_view(method, input_, user, **kwargs):
@@ -252,10 +332,10 @@ def time_series_view(method, input_, user, **kwargs):
 
 @error_handler
 @authorisation
-@method_allow_conditional(['GET', 'DELETE'], ['GET'], is_time_series_owned)
-@rest_json(JSON_OPTS)
+@method_allow_conditional(['GET', 'POST', 'DELETE'], ['GET'], is_time_series_owned)
+@rest_json(JSON_OPTS, COVERAGE_PARSER)
 def time_series_item_view(method, input_, user, identifier, **kwargs):
-    """ List avaiable time-series.
+    """ List items of the requested time series.
     """
     try:
         obj = get_time_series(user).get(eoobj__identifier=identifier)
@@ -263,10 +343,79 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
         raise HttpError(404, "Not found")
 
     if method == "DELETE":
-        obj.delete()
+        eoobj = obj.eoobj
+        with transaction.atomic():
+            obj.delete()
+            eoobj.delete()
         return 204, None
 
-    return 200, [
-        coverage_serialize(cov)
-        for cov in get_coverages(obj.eoobj).order_by('begin_time', 'end_time')
-    ]
+    elif method == "POST":
+        coverage = input_['identifier']
+        try:
+            cov = get_coverages(obj.source.eoobj).get(identifier=coverage)
+        except ObjectDoesNotExist:
+            raise HttpError(400, "Bad Request")
+        obj.eoobj.insert(cov)
+        return 200, coverage_serialize(cov)
+
+    if 'all' not in kwargs['request'].GET:
+        # list only coverages inluded in the collection
+        return 200, [
+            coverage_serialize(cov) for cov
+            in get_coverages(obj.eoobj).order_by('begin_time', 'end_time')
+        ]
+    else:
+        # list all avaiilable coverages mathing the selection
+
+        included = set()
+        for cov in get_coverages(obj.eoobj):
+            included.add(cov.identifier)
+
+        # list avaiable
+        selection = SELECTION_PARSER.parse(json.loads(obj.selection or '{}'))
+        toi = selection.get('toi', None)
+        aoi = selection.get('aoi', None)
+
+        coverages = get_coverages(obj.source.eoobj)
+        if toi:
+            coverages = coverages.filter(
+                begin_time__lte=toi['end'],
+                end_time__gte=toi['start'],
+            )
+        if aoi:
+            bbox_geom = Polygon.from_bbox((
+                aoi['left'] - TOLERANCE,
+                aoi['bottom'] - TOLERANCE,
+                aoi['right'] + TOLERANCE,
+                aoi['top'] + TOLERANCE,
+            ))
+            coverages = coverages.filter(
+                footprint__intersects=bbox_geom,
+                #footprint__within=bbox_geom,
+            )
+
+        return 200, [
+            coverage_serialize_extra(cov, [('in', cov.identifier in included)])
+            for cov in coverages.order_by('begin_time', 'end_time')
+        ]
+
+
+@error_handler
+@authorisation
+@method_allow_conditional(['GET', 'DELETE'], ['GET'], is_time_series_owned)
+@rest_json(JSON_OPTS)
+def time_series_coverage_view(method, input_, user, identifier, coverage,
+                              **kwargs):
+    """ Handle a requested item of the time series.
+    """
+    try:
+        obj = get_time_series(user).get(eoobj__identifier=identifier)
+        cov = get_coverages(obj.eoobj).get(identifier=coverage)
+    except ObjectDoesNotExist:
+        raise HttpError(404, "Not found")
+
+    if method == "DELETE":
+        obj.eoobj.remove(cov)
+        return 204, None
+
+    return 200, coverage_serialize(cov)

@@ -49,6 +49,7 @@ from damats.webapp.views_users import (
 )
 from damats.webapp.views_time_series import (
     sources_view, sources_item_view, time_series_view, time_series_item_view,
+    sources_coverage_view, time_series_coverage_view,
 )
 
 JOB_STATUS_DICT = dict(Job.STATUS_CHOICES)
@@ -79,57 +80,57 @@ def get_jobs(user, owned=True, read_only=True):
 
 #-------------------------------------------------------------------------------
 
-# TEST VIEW - TO BE REMOVED
-#@error_handler
-#@authorisation
-#@method_allow(['GET'])
-#@rest_json(JSON_OPTS)
-#def user_profile(method, input_, user, **kwargs):
-#    """ DAMATS user profile view.
-#    """
-#    user_id = user.identifier
-#    groups = [obj.identifier for obj in user.groups.all()]
-#    sources = [
-#        OrderedDict((
-#            ("identifier", obj.eoobj.identifier),
-#            ("name", obj.name),
-#            ("description", obj.description),
-#        )) for obj in get_sources(user)
-#    ]
-#    time_series = [
-#        OrderedDict((
-#            ("identifier", obj.eoobj.identifier),
-#            ("name", obj.name),
-#            ("description", obj.description),
-#            ("is_owner", obj.owner.identifier == user_id),
-#        )) for obj in get_time_series(user)
-#    ]
-#    processes = [
-#        OrderedDict((
-#            ("identifier", obj.identifier),
-#            ("name", obj.name),
-#            ("description", obj.description),
-#        )) for obj in get_processes(user)
-#    ]
-#    jobs = [
-#        OrderedDict((
-#            ("identifier", obj.identifier),
-#            ("name", obj.name),
-#            ("description", obj.description),
-#            ("status", JOB_STATUS_DICT[obj.status]),
-#            ("is_owner", obj.owner.identifier == user_id),
-#        )) for obj in get_jobs(user)
-#    ]
-#    return OrderedDict((
-#        ("identifier", user_id),
-#        ("name", user.name),
-#        ("description", user.description),
-#        ("groups", groups),
-#        ("sources", sources),
-#        ("processes", processes),
-#        ("time_series", time_series),
-#        ("jobs", jobs),
-#    ))
+# TEST ROOT VIEW
+@error_handler
+@authorisation
+@method_allow(['GET'])
+@rest_json(JSON_OPTS)
+def root_view(method, input_, user, **kwargs):
+    """ DAMATS user profile view.
+    """
+    user_id = user.identifier
+    groups = [obj.identifier for obj in user.groups.all()]
+    sources = [
+        OrderedDict((
+            ("identifier", obj.eoobj.identifier),
+            ("name", obj.name),
+            ("description", obj.description),
+        )) for obj in get_sources(user)
+    ]
+    time_series = [
+        OrderedDict((
+            ("identifier", obj.eoobj.identifier),
+            ("name", obj.name),
+            ("description", obj.description),
+            ("is_owner", obj.owner.identifier == user_id),
+        )) for obj in get_time_series(user)
+    ]
+    processes = [
+        OrderedDict((
+            ("identifier", obj.identifier),
+            ("name", obj.name),
+            ("description", obj.description),
+        )) for obj in get_processes(user)
+    ]
+    jobs = [
+        OrderedDict((
+            ("identifier", obj.identifier),
+            ("name", obj.name),
+            ("description", obj.description),
+            ("status", JOB_STATUS_DICT[obj.status]),
+            ("is_owner", obj.owner.identifier == user_id),
+        )) for obj in get_jobs(user)
+    ]
+    return OrderedDict((
+        ("identifier", user_id),
+        ("name", user.name),
+        ("description", user.description),
+        ("groups", groups),
+        ("sources", sources),
+        ("processes", processes),
+        ("time_series", time_series),
+        ("jobs", jobs),
+    ))
 
 
 @error_handler

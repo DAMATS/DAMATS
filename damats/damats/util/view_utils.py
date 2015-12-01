@@ -193,7 +193,7 @@ def rest_json(json_options=None, validation_parser=None, defauts=None):
                         obj_input = tmp
                 else:
                     obj_input = None
-            except (TypeError, ValueError):
+            except (KeyError, TypeError, ValueError):
                 raise HttpError(400, "Bad Request")
             kwargs['request'] = request
             status, obj_output = view(
