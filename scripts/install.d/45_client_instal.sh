@@ -1,1 +1,0 @@
-../scripts.d/45_client_instal.sh
