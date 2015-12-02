@@ -22,7 +22,7 @@ SOCKET_PREFIX="run/wsgi"
 #======================================================================
 
 # STEP 1:  INSTALL PACKAGES
-yum --assumeyes install httpd mod_wsgi #mod_ssl
+yum --assumeyes install httpd mod_wsgi mod_ssl crypto-utils
 
 
 # STEP 2: FIREWALL SETUP (OPTIONAL)
@@ -30,7 +30,7 @@ yum --assumeyes install httpd mod_wsgi #mod_ssl
 # and make the firewal chages permanent.
 if [ "$ENABLE_FIREWALL" = "YES" ]
 then
-    for SERVICE in http #https
+    for SERVICE in http https
     do
         sudo firewall-cmd --add-service=$SERVICE
         sudo firewall-cmd --permanent --add-service=$SERVICE
