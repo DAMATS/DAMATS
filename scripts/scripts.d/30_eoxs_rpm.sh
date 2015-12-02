@@ -18,4 +18,5 @@ FNAME="`ls "$CONTRIB_DIR"/EOxServer-*.noarch.rpm | sort | tail -n 1`"
 [ -n "$FNAME" -a -f "$FNAME" ] || { error "Failed to locate the RPM package." ; exit 1 ; }
 
 # install the package and its dependencies
+yum --assumeyes install proj-epsg
 yum --assumeyes install "$FNAME"
