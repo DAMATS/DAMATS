@@ -245,8 +245,10 @@ wq
 END
 
 # set the allowed hosts
+# NOTE: Hostname seemes to be very unreliable.
+#1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['$HOSTNAME','127.0.0.1','::1']/
 sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
-1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['$HOSTNAME','127.0.0.1','::1']/
+1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['*','127.0.0.1','::1']/
 wq
 END
 
