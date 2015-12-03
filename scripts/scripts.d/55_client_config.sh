@@ -26,7 +26,7 @@ CONFIG_JSON="${DAMATS_CLIENT_HOME}/config.json"
 
 # define JQ filters
 _F1=".mapConfig.products=[]"
-_F2=".damats.url=\"${DAMATS_SERVER_URL}/damats\""
+_F2=".damats.url=\"${DAMATS_SERVER_URL}\""
 FILTERS="$_F1|$_F2"
 
 sudo -u "$DAMATS_USER" cp "$CONFIG_JSON" "$CONFIG_JSON~" && \
