@@ -219,9 +219,10 @@ def create_collection(identifier):
 @transaction.atomic
 def create_time_series(input_, user):
     """ Handle create requests and create a new TimeSeries object. """
-
-    def pack_selection(selection):
-        """ pack selection object """
+    #TODO: allow:
+    # - arbitrary geomety input
+    # - point with a buffer (up to 100km)
+    # - bouding box
 
     # First check the source.
     try:
@@ -262,7 +263,8 @@ def create_time_series(input_, user):
 
     coverages = get_coverages(source.eoobj).filter(
         begin_time__lte=toi['end'], end_time__gte=toi['start'],
-        footprint__intersects=bbox_geom,
+        footprint__contains=bbox_geom,
+        #footprint__intersects=bbox_geom,
         #footprint__within=bbox_geom,
     )
     for eoobj in coverages:
@@ -390,7 +392,8 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
                 aoi['top'] + TOLERANCE,
             ))
             coverages = coverages.filter(
-                footprint__intersects=bbox_geom,
+                footprint__contains=bbox_geom,
+                #footprint__intersects=bbox_geom,
                 #footprint__within=bbox_geom,
             )
 
