@@ -96,8 +96,12 @@ SITS_PARSER = Object((
     )), True),
 ))
 
-COVERAGE_PARSER = Object((
-    ('identifier', String),
+COVERAGE_PARSER_POST = Object((
+    ('id', String, True),
+))
+
+COVERAGE_PARSER_PUT = Object((
+    ('in', Bool, False, True),
 ))
 
 #-------------------------------------------------------------------------------
@@ -335,7 +339,7 @@ def time_series_view(method, input_, user, **kwargs):
 @error_handler
 @authorisation
 @method_allow_conditional(['GET', 'POST', 'DELETE'], ['GET'], is_time_series_owned)
-@rest_json(JSON_OPTS, COVERAGE_PARSER)
+@rest_json(JSON_OPTS, COVERAGE_PARSER_POST)
 def time_series_item_view(method, input_, user, identifier, **kwargs):
     """ List items of the requested time series.
     """
@@ -345,6 +349,7 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
         raise HttpError(404, "Not found")
 
     if method == "DELETE":
+        # delete time-series
         eoobj = obj.eoobj
         with transaction.atomic():
             obj.delete()
@@ -352,13 +357,18 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
         return 204, None
 
     elif method == "POST":
-        coverage = input_['identifier']
+        # link an existing coverage from source to the time-series
+        if get_coverages(obj.eoobj).filter(identifier=input_['id']).exists():
+            # the record already exists
+            raise HttpError(409, "Conflict")
         try:
-            cov = get_coverages(obj.source.eoobj).get(identifier=coverage)
+            cov = get_coverages(obj.source.eoobj).get(identifier=input_['id'])
         except ObjectDoesNotExist:
-            raise HttpError(400, "Bad Request")
+            # no record found - linking cannot be done
+            raise HttpError(422, "Unprocessable Entity")
         obj.eoobj.insert(cov)
-        return 200, coverage_serialize(cov)
+        return 201, coverage_serialize(cov)
+
 
     if 'all' not in kwargs['request'].GET:
         # list only coverages inluded in the collection
@@ -367,7 +377,7 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
             in get_coverages(obj.eoobj).order_by('begin_time', 'end_time')
         ]
     else:
-        # list all avaiilable coverages mathing the selection
+        # list all available coverages matching the selection
 
         included = set()
         for cov in get_coverages(obj.eoobj):
@@ -405,20 +415,33 @@ def time_series_item_view(method, input_, user, identifier, **kwargs):
 
 @error_handler
 @authorisation
-@method_allow_conditional(['GET', 'DELETE'], ['GET'], is_time_series_owned)
-@rest_json(JSON_OPTS)
+@method_allow_conditional(['GET', 'PUT', 'DELETE'], ['GET'], is_time_series_owned)
+@rest_json(JSON_OPTS, COVERAGE_PARSER_PUT)
 def time_series_coverage_view(method, input_, user, identifier, coverage,
                               **kwargs):
     """ Handle a requested item of the time series.
     """
     try:
         obj = get_time_series(user).get(eoobj__identifier=identifier)
-        cov = get_coverages(obj.eoobj).get(identifier=coverage)
+        if method == "PUT":
+            cov = get_coverages(obj.source.eoobj).get(identifier=coverage)
+        else:
+            cov = get_coverages(obj.eoobj).get(identifier=coverage)
     except ObjectDoesNotExist:
         raise HttpError(404, "Not found")
 
     if method == "DELETE":
+        # unlink coverage from a collection
         obj.eoobj.remove(cov)
         return 204, None
+
+    if method == "PUT":
+        # PUT is used by the SITS editor to controll content of the time-series
+        exists = get_coverages(obj.eoobj).filter(identifier=coverage).exists()
+        if input_['in'] and not exists:
+            obj.eoobj.insert(cov)
+        elif not input_['in'] and exists:
+            obj.eoobj.remove(cov)
+        return 200, coverage_serialize_extra(cov, [('in', input_['in'])])
 
     return 200, coverage_serialize(cov)
