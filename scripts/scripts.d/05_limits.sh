@@ -28,4 +28,3 @@ $DAMATS_USER      hard    nofile     500000
 root       soft    nofile     500000
 root       hard    nofile     500000
 END
-

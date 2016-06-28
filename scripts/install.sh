@@ -29,7 +29,11 @@
 
 INSTALL_LOG="./install.log"
 
+#NOTE: The optional 'user.conf' is used for the custom user's configuration options
+#      overiding the defaults in 'lib_common.sh'.
+
 #source common parts
+[ -f "`dirname $0`/user.conf" ] && . `dirname $0`/user.conf
 . `dirname $0`/lib_common.sh
 . `dirname $0`/lib_logging.sh
 
@@ -53,20 +57,20 @@ INSTALL_LOG="./install.log"
         then
             info "Creating $4: $3"
             mkdir -p "$3"
+            chown -v "$1" "$3"
+            chmod -v "$2" "$3"
         fi
-        chown -v "$1" "$3"
-        chmod -v "$2" "$3"
     }
 
     id -g "$DAMATS_GROUP" >/dev/null 2>&1 || \
     {
-        info "Creatting system group: $DAMATS_GROUP"
+        info "Creating system group: $DAMATS_GROUP"
         groupadd -r "$DAMATS_GROUP"
     }
 
     id -u "$DAMATS_USER" >/dev/null 2>&1 || \
     {
-        info "Creatting system user: $DAMATS_USER"
+        info "Creating system user: $DAMATS_USER"
         useradd -r -M -g "$DAMATS_GROUP" -d "$DAMATS_ROOT" -s /sbin/nologin -c "DAMATS system user" "$DAMATS_USER"
         usermod -L "$DAMATS_USER"
     }
@@ -74,17 +78,15 @@ INSTALL_LOG="./install.log"
     # just in case the ODA-OS directories do not exists create them
     # and set the right permissions
 
-    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0755 "$DAMATS_ROOT" "subsytem's root directory"
-    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_LOGDIR" "subsytem's logging directory"
-    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_DATADIR" "subsytem's long-term data storage directory"
-    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_TMPDIR" "subsytem's short-term data stoarage directory"
-
+    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0755 "$DAMATS_ROOT" "subsystem's root directory"
+    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_LOGDIR" "subsystem's logging directory"
+    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_DATADIR" "subsystem's long-term data storage directory"
+    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_TMPDIR" "subsystem's short-term data storage directory"
     #-------------------------------------------------------------------------------
     # execute specific installation scripts
 
     SCRIPTS=""
     PROFILE="install.d"
-
 
     # parse command line arguments
     while [ "$#" -gt 0 ]

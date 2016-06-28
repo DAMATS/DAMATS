@@ -60,9 +60,9 @@ export DAMATS_USER=${DAMATS_USER:-damats}
 # location of the DAMATS Server home directory
 export DAMATS_SERVER_HOME=${DAMATS_SERVER_HOME:-$DAMATS_ROOT/eoxs}
 # WSGI daemon - number of processes to be used by the DAMATS EOxServer instances
-export EOXS_WSGI_NPROC=4
+export EOXS_WSGI_NPROC=${EOXS_WSGI_NPROC:-4}
 # WSGI daemon - process group to be used by the DAMATS EOxServer instances
-export EOXS_WSGI_PROCESS_GROUP=damats_eoxs_ows
+export EOXS_WSGI_PROCESS_GROUP=${EOXS_WSGI_PROCESS_GROUP:-damats_eoxs_ows}
 
 # location of the DAMATS Client home directory
 export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}

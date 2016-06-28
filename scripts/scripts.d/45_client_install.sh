@@ -32,6 +32,7 @@ FNAME="`ls "$CONTRIB_DIR"/DAMATSClient-*.tar.gz | sort | tail -n 1`"
 mkdir -p "$TMPDIR"
 
 # unpack
+info "Installation package located in: $FNAME"
 tar -xzf "$FNAME" --directory="$TMPDIR"
 
 # move to destination

@@ -108,8 +108,8 @@ local	$DBNAME	all	reject
 wq
 END
 
-sudo systemctl restart postgresql.service
-sudo systemctl status postgresql.service
+systemctl restart postgresql.service
+systemctl status postgresql.service
 
 #-------------------------------------------------------------------------------
 # STEP 3: SETUP DJANGO DB BACKEND
@@ -144,29 +144,33 @@ do
 
     # EOxServer instance configured by the automatic installation script
 
-    # WSGI service endpoint
-    Alias /$INSTANCE "${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
-    <Directory "${INSTROOT}/${INSTANCE}/${INSTANCE}">
-        Options +ExecCGI -MultiViews +FollowSymLinks
-        AddHandler wsgi-script .py
-        WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
-        Header set Access-Control-Allow-Origin "*"
-        Header set Access-Control-Allow-Headers Content-Type
-        Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
+    <Location "/">
         #Require all granted
         AuthType basic
         AuthName "DAMATS server login"
         AuthBasicProvider file
         AuthUserFile "$BASIC_AUTH_PASSWD_FILE"
         Require valid-user
-    </Directory>
+    </Location>
 
     # static content
-    Alias $INSTSTAT_URL "$INSTSTAT_DIR"
+    Alias "$INSTSTAT_URL" "$INSTSTAT_DIR"
     <Directory "$INSTSTAT_DIR">
+        #EnableSendfile off
         Options -MultiViews +FollowSymLinks
-        Require all granted
         Header set Access-Control-Allow-Origin "*"
+    </Directory>
+
+    # WSGI service endpoint
+    WSGIScriptAlias "/$INSTANCE" "${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
+    <Directory "${INSTROOT}/${INSTANCE}/${INSTANCE}">
+        <Files "wsgi.py">
+            WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
+            WSGIApplicationGroup %{GLOBAL}
+            Header set Access-Control-Allow-Origin "*"
+            Header set Access-Control-Allow-Headers Content-Type
+            Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
+        </Files>
     </Directory>
 
     # EOXS00_END - EOxServer instance - Do not edit or remove this line!
@@ -249,6 +253,12 @@ END
 #1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['$HOSTNAME','127.0.0.1','::1']/
 sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
 1,\$s/\(^ALLOWED_HOSTS\s*=\s*\).*/\1['*','127.0.0.1','::1']/
+wq
+END
+
+# disable bugy process resources
+sudo -u "$DAMATS_USER" ex "$SETTINGS" <<END
+g/^\s*'eoxserver.resources.processes',/s/'eoxserver.resources.processes'/#&/
 wq
 END
 
@@ -394,13 +404,17 @@ info "Initializing EOxServer instance '${INSTANCE}' ..."
 sudo -u "$DAMATS_USER" python "$MNGCMD" collectstatic -l --noinput
 
 # setup new database
-sudo -u "$DAMATS_USER" python "$MNGCMD" syncdb --noinput
+sudo -u "$DAMATS_USER" python "$MNGCMD" makemigrations
+sudo -u "$DAMATS_USER" python "$MNGCMD" migrate
+
+#-------------------------------------------------------------------------------
+# STEP 8: APP-SPECIFIC INITIALISATION
 
 # load range types (when available)
 #INITIAL_RANGETYPES="$DAMATS__IEAS_HOME/range_types.json"
 #[ -f "$INITIAL_RANGETYPES" ] && sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load < "$INITIAL_RANGETYPES"
 
 #-------------------------------------------------------------------------------
-# STEP 8: FINAL WEB SERVER RESTART
-sudo systemctl restart httpd.service
-sudo systemctl status httpd.service
+# STEP 9: FINAL WEB SERVER RESTART
+systemctl restart httpd.service
+systemctl status httpd.service

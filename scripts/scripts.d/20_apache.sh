@@ -36,7 +36,6 @@ then
         sudo firewall-cmd --permanent --add-service=$SERVICE
     done
 fi
-echo OK
 
 # STEP 3: SETUP THE SITE
 #NOTE 1: Current setup does not support multiple virtual hosts.

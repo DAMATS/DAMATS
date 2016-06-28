@@ -59,4 +59,3 @@ warn()
 {
     echo -e "`tstamp` ${RED}WARNING: $EXENAME: $* ${RES}"
 }
-

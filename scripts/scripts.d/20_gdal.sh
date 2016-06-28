@@ -10,4 +10,4 @@
 
 info "Installing GDAL library ... "
 
-yum --assumeyes install gdal gdal-libs gdal-python
+yum --assumeyes install gdal gdal-libs gdal-python proj-epsg

@@ -10,20 +10,18 @@
 
 info "Installing PosgreSQL RDBMS ... "
 
-#[ -z "$DAMATS_USER" ] && error "Missing the required DAMATS_USER variable!"
-
 PG_DATA_DIR_DEFAULT="/var/lib/pgsql/data"
 PG_DATA_DIR="${DAMATS_PGDATA_DIR:-$PG_DATA_DIR_DEFAULT}"
 #======================================================================
 
-# STEP 1: INSTALL PACKAGES
+# STEP 1: INSTALL RPM PACKAGES
 yum --assumeyes install postgresql postgresql-server postgis python-psycopg2
 
 # STEP 2: Shut-down the postgress if already installed and running.
 if [ -n "`systemctl | grep postgresql.service`" ]
 then
     info "Stopping running PostgreSQL server ..."
-    sudo systemctl stop postgresql.service
+    systemctl stop postgresql.service
 fi
 
 # STEP 3: CONFIGURE THE STORAGE DIRECTORY
@@ -37,19 +35,19 @@ cat >/etc/systemd/system/postgresql.service <<END
 [Service]
 Environment=PGDATA=$PG_DATA_DIR
 END
-sudo systemctl daemon-reload
+systemctl daemon-reload
 
 # STEP 4: INIT THE DB AND START THE SERVICE
 info "New database initialisation ... "
 
-sudo postgresql-setup initdb
-sudo systemctl disable postgresql.service # DO NOT REMOVE!
-sudo systemctl enable postgresql.service
-sudo systemctl start postgresql.service
-sudo systemctl status postgresql.service
+postgresql-setup initdb
+systemctl disable postgresql.service # DO NOT REMOVE!
+systemctl enable postgresql.service
+systemctl start postgresql.service
+systemctl status postgresql.service
 
 # STEP 5: SETUP POSTGIS DATABASE TEMPLATE
-if [ -z "`sudo sudo -u postgres psql --list | grep template_postgis`" ]
+if [ -z "`sudo -u postgres psql --list | grep template_postgis`" ]
 then
     sudo -u postgres createdb template_postgis
     #sudo -u postgres createlang plpgsql template_postgis
