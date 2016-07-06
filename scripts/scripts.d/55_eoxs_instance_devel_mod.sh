@@ -63,6 +63,14 @@ do
         Header set Access-Control-Allow-Origin "*"
     </Directory>
 
+    # WPS static content
+    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM"
+    <Directory "$DAMATS_WPS_PERM">
+        #EnableSendfile off
+        Options -MultiViews +FollowSymLinks +Indexes
+        Header set Access-Control-Allow-Origin "*"
+    </Directory>
+
     # WSGI service endpoint
     WSGIScriptAlias "/$INSTANCE" "${INSTROOT}/${INSTANCE}/${INSTANCE}/wsgi.py"
     <Directory "${INSTROOT}/${INSTANCE}/${INSTANCE}">

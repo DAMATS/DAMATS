@@ -15,7 +15,6 @@ info "Configuring DAMATS client ..."
 [ -z "$DAMATS_CLIENT_HOME" ] && error "Missing the required DAMATS_CLIENT_HOME variable!"
 [ -z "$DAMATS_USER" ] && error "Missing the required DAMATS_USER variable!"
 
-
 BASIC_AUTH_PASSWD_FILE="/etc/httpd/authn/damats-passwords"
 DAMATS_SERVER_URL="/`basename "$DAMATS_SERVER_HOME"`"
 DAMATS_CLIENT_URL="/`basename "$DAMATS_CLIENT_HOME"`"

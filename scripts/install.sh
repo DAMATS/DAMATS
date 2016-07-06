@@ -82,6 +82,7 @@ INSTALL_LOG="./install.log"
     _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_LOGDIR" "subsystem's logging directory"
     _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_DATADIR" "subsystem's long-term data storage directory"
     _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_TMPDIR" "subsystem's short-term data storage directory"
+    _mkdir "$DAMATS_USER:$DAMATS_GROUP" 0775 "$DAMATS_WPS_ROOT" "subsystem's WPS data storage directory"
     #-------------------------------------------------------------------------------
     # execute specific installation scripts
 

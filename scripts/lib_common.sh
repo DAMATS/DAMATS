@@ -69,3 +69,12 @@ export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}
 
 # location of the installed DAMATS algorightms
 export DAMATS_ALGS_ROOT=${DAMATS_ALGS_ROOT:-$DAMATS_ROOT/algs}
+
+# WPS configuration - permanent storage location
+export DAMATS_WPS_ROOT=${DAMATS_WPS_ROOT:-/srv/wps}
+# WPS configuration - temporary workspace location
+export DAMATS_WPS_TEMP=${DAMATS_WPS_TEMP:-$DAMATS_WPS_ROOT/temp}
+# WPS configuration - permanent storage location
+export DAMATS_WPS_PERM=${DAMATS_WPS_PERM:-$DAMATS_WPS_ROOT/perm}
+# WPS configuration - permanent storage - public URL path
+export DAMATS_WPS_URL=${DAMATS_WPS_URL:-/wps}

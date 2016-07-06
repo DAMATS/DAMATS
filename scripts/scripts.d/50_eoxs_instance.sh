@@ -19,6 +19,9 @@ info "Configuring EOxServer instance ... "
 [ -z "$DAMATS_GROUP" ] && error "Missing the required DAMATS_GROUP variable!"
 [ -z "$DAMATS_LOGDIR" ] && error "Missing the required DAMATS_LOGDIR variable!"
 [ -z "$DAMATS_TMPDIR" ] && error "Missing the required DAMATS_TMPDIR variable!"
+[ -z "$DAMATS_WPS_TEMP" ] && error "Missing the required DAMATS_WPS_TEMP variable!"
+[ -z "$DAMATS_WPS_PERM" ] && error "Missing the required DAMATS_WPS_PERM variable!"
+[ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
 
 HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
@@ -156,6 +159,14 @@ do
     # static content
     Alias "$INSTSTAT_URL" "$INSTSTAT_DIR"
     <Directory "$INSTSTAT_DIR">
+        #EnableSendfile off
+        Options -MultiViews +FollowSymLinks
+        Header set Access-Control-Allow-Origin "*"
+    </Directory>
+
+    # WPS static content
+    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM"
+    <Directory "$DAMATS_WPS_PERM">
         #EnableSendfile off
         Options -MultiViews +FollowSymLinks
         Header set Access-Control-Allow-Origin "*"
@@ -413,6 +424,27 @@ sudo -u "$DAMATS_USER" python "$MNGCMD" migrate
 # load range types (when available)
 #INITIAL_RANGETYPES="$DAMATS__IEAS_HOME/range_types.json"
 #[ -f "$INITIAL_RANGETYPES" ] && sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load < "$INITIAL_RANGETYPES"
+
+# WPS storage configuration
+
+sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
+/\[services\.ows\.wps\]/a
+path_temp=$DAMATS_WPS_TEMP
+path_perm=$DAMATS_WPS_PERM
+url_base=$DAMATS_WPS_URL
+.
+wq
+END
+
+[ ! -d "$DAMATS_WPS_TEMP" ] || rm -fRv "$DAMATS_WPS_TEMP"
+[ ! -d "$DAMATS_WPS_PERM" ] || rm -fRv "$DAMATS_WPS_PERM"
+
+for D in "$DAMATS_WPS_TEMP" "$DAMATS_WPS_PERM"
+do
+    mkdir -p "$D"
+    chown -v "$DAMATS_USER:$DAMATS_GROUP" "$D"
+    chmod -v 0755 "$D"
+done
 
 #-------------------------------------------------------------------------------
 # STEP 9: FINAL WEB SERVER RESTART
