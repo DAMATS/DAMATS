@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
 
   # set auto_update to false, if you do NOT want to check the correct 
   # additions version when booting this machine
-  config.vbguest.auto_update = false
+  #config.vbguest.auto_update = false
   # config.vbguest.iso_path = "http://download.virtualbox.org/virtualbox/4.3.14/VBoxGuestAdditions_4.3.14.iso"
 
   # Disable automatic box update checking. If you disable this, then
@@ -53,6 +53,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.synced_folder "../../eoxserver", "/usr/local/eoxserver", owner: "root", group: "root"
   config.vm.synced_folder "../../DAMATS-Server", "/usr/local/damats", owner: "vagrant", group: "vagrant"
+  config.vm.synced_folder "../../WPS-Backend/", "/usr/local/eox-wps-async", owner: "vagrant", group: "vagrant"
   config.vm.synced_folder "../", "/home/vagrant/DAMATS", owner: "vagrant", group: "vagrant"
   config.vm.synced_folder "~/", "/home/vagrant/host", owner: "vagrant", group: "vagrant"
   # data directory (Change to your custom data directory if necessary.)

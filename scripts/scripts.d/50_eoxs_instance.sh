@@ -366,6 +366,7 @@ INSTALLED_APPS += (
 /^)/a
 # DAMATS specific components
 COMPONENTS += (
+    'eoxs_wps_async.**', 
     'damats.processes.**',
 )
 .
