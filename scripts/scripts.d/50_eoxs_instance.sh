@@ -22,6 +22,7 @@ info "Configuring EOxServer instance ... "
 [ -z "$DAMATS_WPS_TEMP" ] && error "Missing the required DAMATS_WPS_TEMP variable!"
 [ -z "$DAMATS_WPS_PERM" ] && error "Missing the required DAMATS_WPS_PERM variable!"
 [ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
+[ -z "$DAMATS_WPS_SOCKET" ] && error "Missing the required DAMATS_WPS_SOCKET variable!"
 
 HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
@@ -366,7 +367,8 @@ INSTALLED_APPS += (
 /^)/a
 # DAMATS specific components
 COMPONENTS += (
-    'eoxs_wps_async.**', 
+    'eoxs_wps_async.backend',
+    'eoxs_wps_async.processes.**',
     'damats.processes.**',
 )
 .
@@ -433,6 +435,7 @@ sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
 path_temp=$DAMATS_WPS_TEMP
 path_perm=$DAMATS_WPS_PERM
 url_base=$DAMATS_WPS_URL
+socket_file=$DAMATS_WPS_SOCKET
 .
 wq
 END
@@ -446,6 +449,25 @@ do
     chown -v "$DAMATS_USER:$DAMATS_GROUP" "$D"
     chmod -v 0755 "$D"
 done
+
+# systemd daemon integration
+cat > /etc/systemd/system/eoxs_wps_async.service <<END
+[Unit]
+Description= Asynchronous EOxServer WPS Daemon
+After=network.target
+Before=httpd.service
+
+[Service]
+Type=simple
+User=damats
+ExecStart=/usr/bin/python -EsOm eoxs_wps_async.daemon ${INSTANCE}.settings $INSTROOT/$INSTANCE
+
+[Install]
+WantedBy=multi-user.target
+END
+systemctl daemon-reload
+systemctl restart eoxs_wps_async.service
+systemctl status eoxs_wps_async.service
 
 #-------------------------------------------------------------------------------
 # STEP 9: FINAL WEB SERVER RESTART

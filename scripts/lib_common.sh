@@ -78,3 +78,5 @@ export DAMATS_WPS_TEMP=${DAMATS_WPS_TEMP:-$DAMATS_WPS_ROOT/temp}
 export DAMATS_WPS_PERM=${DAMATS_WPS_PERM:-$DAMATS_WPS_ROOT/perm}
 # WPS configuration - permanent storage - public URL path
 export DAMATS_WPS_URL=${DAMATS_WPS_URL:-/wps}
+# WPS configuration - IPC socket file
+export DAMATS_WPS_SOCKET=${DAMATS_WPS_SOCKET:-$DAMATS_WPS_ROOT/socket}
