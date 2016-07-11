@@ -46,6 +46,8 @@ INSTALL_LOG="./install.log"
 
     #export location of the contrib directory
     export CONTRIB_DIR="$(cd "$(dirname "$0")/../contrib"; pwd )"
+    #export location of the range-type directory
+    export RANGE_TYPE_DIR="$(cd "$(dirname "$0")/../range_types"; pwd )"
 
     #-------------------------------------------------------------------------------
     # check whether the user and group exists

@@ -1,0 +1,1 @@
+../scripts.d/60_eoxs_load_range_types.sh

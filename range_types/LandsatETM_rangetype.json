@@ -1,0 +1,145 @@
+[{
+    "bands": [
+        {
+            "color_interpretation": "BlueBand",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 1 - Blue - uint8",
+            "identifier": "B1",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "GreenBand",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 2 - Green - uint8",
+            "identifier": "B2",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "RedBand",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 3 - Red - uint8",
+            "identifier": "B3",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 4 - NIR - uint8",
+            "identifier": "B4",
+            "name": "NIR",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 5 - SWIR1 - uint8",
+            "identifier": "B5",
+            "name": "SWIR1",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 6 - Thermal - low gain - uint8",
+            "identifier": "B61",
+            "name": "Thermal-Low-Gain",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 6 - Thermal - high gain - uint8",
+            "identifier": "B62",
+            "name": "Thermal-High-Gain",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 7 - SWIR2 - uint8",
+            "identifier": "B7",
+            "name": "SWIR2",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "LandsatETM:radiance:uint8"
+},
+{
+    "bands": [
+        {
+            "color_interpretation": "GrayIndex",
+            "data_type": "Byte",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Landsat/ETM Band 8 - Panchromatic - uint8",
+            "identifier": "B8",
+            "name": "Panchromatic",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "LandsatETM:pan:uint8"
+}]

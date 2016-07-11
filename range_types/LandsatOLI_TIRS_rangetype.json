@@ -1,0 +1,321 @@
+[{
+    "bands": [
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 1 - Deep Blue - uint16",
+            "identifier": "B1",
+            "name": "Deep Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "BlueBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 2 - Blue - uint16",
+            "identifier": "B2",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "GreenBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 3 - Green - uint16",
+            "identifier": "B3",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "RedBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 4 - Red - uint16",
+            "identifier": "B4",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 5 - NIR - uint16",
+            "identifier": "B5",
+            "name": "NIR",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 6 - SWIR1 - uint16",
+            "identifier": "B6",
+            "name": "SWIR1",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 7 - SWIR2 - uint16",
+            "identifier": "B7",
+            "name": "SWIR2",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 9 - Cirrus - uint16",
+            "identifier": "B9",
+            "name": "Cirrus",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "LandsatOLI:radiance:uint16"
+},
+{
+    "bands": [
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 1 - Deep Blue - uint16",
+            "identifier": "B1",
+            "name": "Deep Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "BlueBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 2 - Blue - uint16",
+            "identifier": "B2",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "GreenBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 3 - Green - uint16",
+            "identifier": "B3",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "RedBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 4 - Red - uint16",
+            "identifier": "B4",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 5 - NIR - uint16",
+            "identifier": "B5",
+            "name": "NIR",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 6 - SWIR1 - uint16",
+            "identifier": "B6",
+            "name": "SWIR1",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 7 - SWIR2 - uint16",
+            "identifier": "B7",
+            "name": "SWIR2",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 9 - Cirrus - uint16",
+            "identifier": "B9",
+            "name": "Cirrus",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/TIRS Band 10 - TIRS1 - uint16",
+            "identifier": "B10",
+            "name": "TIRS1",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/TIRS Band 11 - TIRS2 - uint16",
+            "identifier": "B11",
+            "name": "TIRS2",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "LandsatOLI_TIRS:radiance:uint16"
+},
+{
+    "bands": [
+        {
+            "color_interpretation": "GrayIndex",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat/OLI Band 8 - Panchromatic - uint16",
+            "identifier": "B8",
+            "name": "Panchromatic",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "LandsatOLI:pan:uint16"
+},
+{
+    "bands": [
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "Landsat Band Quality - uint16",
+            "identifier": "BQ",
+            "name": "Quality",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "Landsat8:quality:uint16"
+}]
+
