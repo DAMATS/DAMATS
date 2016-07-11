@@ -41,6 +41,9 @@ export DAMATS_HOSTNAME=${DAMATS_HOSTNAME:-$HOSTNAME}
 # root directory of the DAMATS - by default set to '/srv/damats'
 export DAMATS_ROOT=${DAMATS_ROOT:-/srv/damats}
 
+# root directory of the GIT repositories - by default two levels below the installer script.
+export DAMATS_REPO_ROOT=${DAMATS_REPO_ROOT:-$(cd `dirname $0`/../../ ; pwd )}
+
 # directory where the log files shall be placed - by default set to '/var/log/damats'
 export DAMATS_LOGDIR=${DAMATS_LOGDIR:-/var/log/damats}
 

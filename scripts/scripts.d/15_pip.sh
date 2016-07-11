@@ -11,3 +11,6 @@
 info "Installing PIP Python package manager ..."
 
 yum --assumeyes install python-pip
+
+# upgrade pip to the latest version
+pip install --upgrade pip

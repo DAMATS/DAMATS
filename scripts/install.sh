@@ -97,6 +97,10 @@ INSTALL_LOG="./install.log"
                 info "Development installation profile selected."
                 PROFILE="devel.d"
                 ;;
+            --demo  )
+                info "Demo installation profile selected."
+                PROFILE="demo.d"
+                ;;
             *)
                 SCRIPTS="$SCRIPTS $1"
             ;;

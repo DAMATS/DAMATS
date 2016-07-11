@@ -1,0 +1,1 @@
+../scripts.d/60_alg_lda_install.sh

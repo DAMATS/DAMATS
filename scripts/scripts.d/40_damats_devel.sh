@@ -24,4 +24,3 @@ pushd .
 cd $DAMATS_DEV_PATH
 python ./setup.py develop
 popd
-
