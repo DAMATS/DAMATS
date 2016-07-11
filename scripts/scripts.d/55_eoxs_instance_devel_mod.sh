@@ -12,6 +12,8 @@
 info "Configuring EOxServer instance (developepment mods)... "
 
 [ -z "$DAMATS_SERVER_HOME" ] && error "Missing the required DAMATS_SERVER_HOME variable!"
+[ -z "$DAMATS_WPS_PERM_DIR" ] && error "Missing the required DAMATS_WPS_PERM_DIR variable!"
+[ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
 
 HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
@@ -64,8 +66,8 @@ do
     </Directory>
 
     # WPS static content
-    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM"
-    <Directory "$DAMATS_WPS_PERM">
+    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM_DIR"
+    <Directory "$DAMATS_WPS_PERM_DIR">
         #EnableSendfile off
         Options -MultiViews +FollowSymLinks +Indexes
         Header set Access-Control-Allow-Origin "*"

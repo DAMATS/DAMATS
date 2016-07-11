@@ -19,10 +19,13 @@ info "Configuring EOxServer instance ... "
 [ -z "$DAMATS_GROUP" ] && error "Missing the required DAMATS_GROUP variable!"
 [ -z "$DAMATS_LOGDIR" ] && error "Missing the required DAMATS_LOGDIR variable!"
 [ -z "$DAMATS_TMPDIR" ] && error "Missing the required DAMATS_TMPDIR variable!"
-[ -z "$DAMATS_WPS_TEMP" ] && error "Missing the required DAMATS_WPS_TEMP variable!"
-[ -z "$DAMATS_WPS_PERM" ] && error "Missing the required DAMATS_WPS_PERM variable!"
+[ -z "$DAMATS_WPS_TEMP_DIR" ] && error "Missing the required DAMATS_WPS_TEMP_DIR variable!"
+[ -z "$DAMATS_WPS_PERM_DIR" ] && error "Missing the required DAMATS_WPS_PERM_DIR variable!"
+[ -z "$DAMATS_WPS_TASK_DIR" ] && error "Missing the required DAMATS_WPS_TASK_DIR variable!"
 [ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
 [ -z "$DAMATS_WPS_SOCKET" ] && error "Missing the required DAMATS_WPS_SOCKET variable!"
+[ -z "$DAMATS_WPS_NPROC" ] && error "Missing the required DAMATS_WPS_NPROC variable!"
+[ -z "$DAMATS_WPS_MAX_JOBS" ] && error "Missing the required DAMATS_WPS_MAX_JOBS variable!"
 
 HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
@@ -166,8 +169,8 @@ do
     </Directory>
 
     # WPS static content
-    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM"
-    <Directory "$DAMATS_WPS_PERM">
+    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM_DIR"
+    <Directory "$DAMATS_WPS_PERM_DIR">
         #EnableSendfile off
         Options -MultiViews +FollowSymLinks
         Header set Access-Control-Allow-Origin "*"
@@ -432,18 +435,22 @@ sudo -u "$DAMATS_USER" python "$MNGCMD" migrate
 
 sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
 /\[services\.ows\.wps\]/a
-path_temp=$DAMATS_WPS_TEMP
-path_perm=$DAMATS_WPS_PERM
+path_temp=$DAMATS_WPS_TEMP_DIR
+path_perm=$DAMATS_WPS_PERM_DIR
+path_task=$DAMATS_WPS_TASK_DIR
 url_base=$DAMATS_WPS_URL
 socket_file=$DAMATS_WPS_SOCKET
+max_queued_jobs=$DAMATS_WPS_MAX_JOBS
+num_workers=$DAMATS_WPS_NPROC
 .
 wq
 END
 
-[ ! -d "$DAMATS_WPS_TEMP" ] || rm -fRv "$DAMATS_WPS_TEMP"
-[ ! -d "$DAMATS_WPS_PERM" ] || rm -fRv "$DAMATS_WPS_PERM"
+[ ! -d "$DAMATS_WPS_TEMP_DIR" ] || rm -fRv "$DAMATS_WPS_TEMP_DIR"
+[ ! -d "$DAMATS_WPS_PERM_DIR" ] || rm -fRv "$DAMATS_WPS_PERM_DIR"
+[ ! -d "$DAMATS_WPS_TASK_DIR" ] || rm -fRv "$DAMATS_WPS_TASK_DIR"
 
-for D in "$DAMATS_WPS_TEMP" "$DAMATS_WPS_PERM"
+for D in "$DAMATS_WPS_TEMP_DIR" "$DAMATS_WPS_PERM_DIR" "$DAMATS_WPS_TASK_DIR"
 do
     mkdir -p "$D"
     chown -v "$DAMATS_USER:$DAMATS_GROUP" "$D"

@@ -71,12 +71,18 @@ export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}
 export DAMATS_ALGS_ROOT=${DAMATS_ALGS_ROOT:-$DAMATS_ROOT/algs}
 
 # WPS configuration - permanent storage location
-export DAMATS_WPS_ROOT=${DAMATS_WPS_ROOT:-/srv/wps}
+export DAMATS_WPS_ROOT_DIR=${DAMATS_WPS_ROOT_DIR:-/srv/wps}
 # WPS configuration - temporary workspace location
-export DAMATS_WPS_TEMP=${DAMATS_WPS_TEMP:-$DAMATS_WPS_ROOT/temp}
+export DAMATS_WPS_TEMP_DIR=${DAMATS_WPS_TEMP_DIR:-$DAMATS_WPS_ROOT_DIR/workspace}
 # WPS configuration - permanent storage location
-export DAMATS_WPS_PERM=${DAMATS_WPS_PERM:-$DAMATS_WPS_ROOT/perm}
+export DAMATS_WPS_PERM_DIR=${DAMATS_WPS_PERM_DIR:-$DAMATS_WPS_ROOT_DIR/public}
+# WPS configuration - persistent task storage
+export DAMATS_WPS_TASK_DIR=${DAMATS_WPS_TASK_DIR:-$DAMATS_WPS_ROOT_DIR/tasks}
 # WPS configuration - permanent storage - public URL path
 export DAMATS_WPS_URL=${DAMATS_WPS_URL:-/wps}
 # WPS configuration - IPC socket file
-export DAMATS_WPS_SOCKET=${DAMATS_WPS_SOCKET:-$DAMATS_WPS_ROOT/socket}
+export DAMATS_WPS_SOCKET=${DAMATS_WPS_SOCKET:-$DAMATS_WPS_ROOT_DIR/socket}
+# WPS configuration - number of parallel workers
+export DAMATS_WPS_NPROC=${DAMATS_WPS_NPROC:-4}
+# WPS configuration - maximum number of queued jobs
+export DAMATS_WPS_MAX_JOBS=${DAMATS_WPS_MAX_JOBS:-64}
