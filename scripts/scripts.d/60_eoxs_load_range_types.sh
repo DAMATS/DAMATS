@@ -22,5 +22,5 @@ MNGCMD="${INSTROOT}/${INSTANCE}/manage.py"
 { ls "$RANGE_TYPE_DIR/"*.json 2>/dev/null || true ; } | while read RT
 do
     info "Loading range-types from $RT ..."
-    sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load -i "$RT"
+    sudo -u "$DAMATS_USER" python "$MNGCMD" eoxs_rangetype_load -u -i "$RT"
 done
