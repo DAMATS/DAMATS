@@ -14,7 +14,7 @@ info "Installing EOxServer from GIT repository."
 
 # Path to the EOxServer development directory tree:
 EOXS_GIT_PATH="${EOXS_GIT_PATH:-$DAMATS_REPO_ROOT/eoxserver}"
-EOXS_GIT_BRANCH="wps_async"
+EOXS_GIT_BRANCH="damats"
 
 
 # STEP 1: INSTALL DEPENDENCIES
