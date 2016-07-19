@@ -18,7 +18,7 @@ info "Installing DAMATS client ..."
 TMPDIR='/tmp/eoxc'
 
 # locate lates TGZ package
-FNAME="`ls "$CONTRIB_DIR"/DAMATSClient-*.tar.gz | sort | tail -n 1`"
+FNAME="`ls "$CONTRIB_DIR"/DAMATS-Client-*.tar.gz | sort | tail -n 1`"
 
 [ -n "$FNAME" -a -f "$FNAME" ] || { error "Failed to locate the installation package." ; exit 1 ; }
 
@@ -36,7 +36,7 @@ info "Installation package located in: $FNAME"
 tar -xzf "$FNAME" --directory="$TMPDIR"
 
 # move to destination
-ROOT="`find "$TMPDIR" -mindepth 1 -maxdepth 1 -name 'DAMATSClient*' -type d | head -n 1`"
+ROOT="`find "$TMPDIR" -mindepth 1 -maxdepth 1 -name 'DAMATS-Client*' -type d | head -n 1`"
 mv -f "$ROOT" "$DAMATS_CLIENT_HOME"
 
 # fix permisions
