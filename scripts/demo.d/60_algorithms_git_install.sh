@@ -1,0 +1,1 @@
+../scripts.d/60_algorithms_git_install.sh
