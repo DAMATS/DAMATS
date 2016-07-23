@@ -19,7 +19,7 @@ info "Installing DAMATS algorithms from the GIT repository."
 
 # Path to the EOxServer development directory tree:
 ALGS_GIT_PATH="${ALGS_GIT_PATH:-$DAMATS_REPO_ROOT/damats-alg}"
-ALGS_GIT_BRANCH="master"
+ALGS_GIT_BRANCH="eox_cdr"
 ALGS_DIR="$DAMATS_ALGS_ROOT"
 
 # STEP 1: INSTALL DEPENDENCIES
