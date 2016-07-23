@@ -81,7 +81,7 @@
             "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
             "description": "Landsat/ETM Band 6 - Thermal - low gain - uint8",
             "identifier": "B61",
-            "name": "Thermal-Low-Gain",
+            "name": "ThermalLowGain",
             "nil_values": [
                 {
                     "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
@@ -96,7 +96,7 @@
             "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
             "description": "Landsat/ETM Band 6 - Thermal - high gain - uint8",
             "identifier": "B62",
-            "name": "Thermal-High-Gain",
+            "name": "ThermalHighGain",
             "nil_values": [
                 {
                     "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
