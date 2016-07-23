@@ -319,6 +319,11 @@ LOGGING = {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },
+        'eoxs_wps_async': {
+            'handlers': ['eoxserver_file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
         '': {
             'handlers': ['eoxserver_file'],
             'level': 'INFO' if DEBUG else 'WARNING',
