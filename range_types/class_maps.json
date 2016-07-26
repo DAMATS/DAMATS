@@ -1,0 +1,45 @@
+[{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "color_interpretation": "GrayIndex",
+            "data_type": "Byte",
+            "description": "Class Map",
+            "identifier": "ClassMapUInt8",
+            "name": "ClassMapUInt8",
+            "nil_values": [],
+            "uom": "none"
+        }
+    ],
+    "name": "classmap:uint8"
+},
+{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "color_interpretation": "GrayIndex",
+            "data_type": "UInt16",
+            "description": "Class Map",
+            "identifier": "ClassMapUInt16",
+            "name": "ClassMapUInt16",
+            "nil_values": [],
+            "uom": "none"
+        }
+    ],
+    "name": "classmap:uint16"
+},
+{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/float",
+            "color_interpretation": "GrayIndex",
+            "data_type": "Float32",
+            "description": "Class Map",
+            "identifier": "ClassMapFloat32",
+            "name": "ClassMapFloat32",
+            "nil_values": [],
+            "uom": "none"
+        }
+    ],
+    "name": "classmap:float32"
+}]
