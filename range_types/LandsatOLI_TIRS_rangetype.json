@@ -6,7 +6,7 @@
             "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
             "description": "Landsat/OLI Band 1 - Deep Blue - uint16",
             "identifier": "B1",
-            "name": "Deep Blue",
+            "name": "DeepBlue",
             "nil_values": [
                 {
                     "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
@@ -131,7 +131,7 @@
             "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
             "description": "Landsat/OLI Band 1 - Deep Blue - uint16",
             "identifier": "B1",
-            "name": "Deep Blue",
+            "name": "DeepBlue",
             "nil_values": [
                 {
                     "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
