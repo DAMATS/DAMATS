@@ -480,6 +480,7 @@ END
 systemctl daemon-reload
 systemctl restart eoxs_wps_async.service
 systemctl status eoxs_wps_async.service
+systemctl enable 
 
 #-------------------------------------------------------------------------------
 # STEP 9: FINAL WEB SERVER RESTART
