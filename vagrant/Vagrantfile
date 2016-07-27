@@ -61,6 +61,7 @@ Vagrant.configure(2) do |config|
 
   # Shell provisioning
   config.vm.provision :shell, :inline => "cd /home/vagrant/DAMATS/scripts/ ; /bin/sh ./install.sh -d"
+  config.vm.provision :shell, :inline => "sudo systemctl restart eoxs_wps_async.service", :run => 'always'
 
   # Adjust Virtualbox configuration
   config.vm.provider "virtualbox" do |v|
