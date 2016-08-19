@@ -399,7 +399,7 @@ urlpatterns += patterns('',
     (r'^damats/time_series/([0-9A-Za-z][-_0-9A-Za-z]{1,255})/?$', 'damats.webapp.views.time_series_item_view'),
     (r'^damats/time_series/([0-9A-Za-z][-_0-9A-Za-z]{1,255})/([0-9A-Za-z][-_0-9A-Za-z]{1,255})/?$', 'damats.webapp.views.time_series_coverage_view'),
     (r'^damats/jobs/?$', 'damats.webapp.views.jobs_view'),
-    (r'^damats/jobs/([0-9A-Za-z][-_0-9A-Za-z]{1,255})/?$', 'damats.webapp.views.jobs_view'),
+    (r'^damats/jobs/([0-9A-Za-z][-_0-9A-Za-z]{1,255})/?$', 'damats.webapp.views.job_item_view'),
 )
 .
 wq
