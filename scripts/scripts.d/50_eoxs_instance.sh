@@ -183,8 +183,8 @@ do
             WSGIProcessGroup $EOXS_WSGI_PROCESS_GROUP
             WSGIApplicationGroup %{GLOBAL}
             Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Headers Content-Type
-            Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
+            #Header set Access-Control-Allow-Headers Content-Type
+            #Header set Access-Control-Allow-Methods "GET, PUT, POST, DELETE, OPTIONS"
         </Files>
     </Directory>
 
