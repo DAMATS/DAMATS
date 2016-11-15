@@ -13,9 +13,8 @@ info "Configuring EOxServer instance (developepment mods)... "
 
 [ -z "$DAMATS_SERVER_HOME" ] && error "Missing the required DAMATS_SERVER_HOME variable!"
 [ -z "$DAMATS_WPS_PERM_DIR" ] && error "Missing the required DAMATS_WPS_PERM_DIR variable!"
-[ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
+[ -z "$DAMATS_WPS_URL_PATH" ] && error "Missing the required DAMATS_WPS_URL_PATH variable!"
 
-HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
 INSTROOT="`dirname "$DAMATS_SERVER_HOME"`"
 
@@ -55,6 +54,14 @@ do
         #AuthBasicProvider file
         #AuthUserFile "$BASIC_AUTH_PASSWD_FILE"
         #Require valid-user
+    </Location>
+
+    # disable authenntication for OWS from localhost
+    <Location "/eoxs/ows">
+        Require all granted
+        #Require valid-user
+        #Require ip 127.0.0.1
+        #Require ip ::1
     </Location>
 
     # static content

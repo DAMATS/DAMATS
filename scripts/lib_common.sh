@@ -38,6 +38,9 @@ export ENABLE_FIREWALL=${ENABLE_FIREWALL:-YES}
 # NOTE: Critical parameter! Be sure you set it to the proper value.
 export DAMATS_HOSTNAME=${DAMATS_HOSTNAME:-$HOSTNAME}
 
+# root URL of the service
+export DAMATS_URL_ROOT=${DAMATS_URL_ROOT:-http://$DAMATS_HOSTNAME/}
+
 # root directory of the DAMATS - by default set to '/srv/damats'
 export DAMATS_ROOT=${DAMATS_ROOT:-/srv/damats}
 
@@ -82,7 +85,7 @@ export DAMATS_WPS_PERM_DIR=${DAMATS_WPS_PERM_DIR:-$DAMATS_WPS_ROOT_DIR/public}
 # WPS configuration - persistent task storage
 export DAMATS_WPS_TASK_DIR=${DAMATS_WPS_TASK_DIR:-$DAMATS_WPS_ROOT_DIR/tasks}
 # WPS configuration - permanent storage - public URL path
-export DAMATS_WPS_URL=${DAMATS_WPS_URL:-/wps}
+export DAMATS_WPS_URL_PATH=${DAMATS_WPS_URL_PATH:-/wps}
 # WPS configuration - IPC socket file
 export DAMATS_WPS_SOCKET=${DAMATS_WPS_SOCKET:-$DAMATS_WPS_ROOT_DIR/socket}
 # WPS configuration - number of parallel workers

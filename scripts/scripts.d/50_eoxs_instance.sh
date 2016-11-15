@@ -14,6 +14,7 @@ info "Configuring EOxServer instance ... "
 # NOTE: Multiple EOxServer instances are not foreseen in DAMATS.
 
 [ -z "$DAMATS_HOSTNAME" ] && error "Missing the required DAMATS_HOSTNAME variable!"
+[ -z "$DAMATS_URL_ROOT" ] && error "Missing the required DAMATS_URL_ROOT variable!"
 [ -z "$DAMATS_SERVER_HOME" ] && error "Missing the required DAMATS_SERVER_HOME variable!"
 [ -z "$DAMATS_USER" ] && error "Missing the required DAMATS_USER variable!"
 [ -z "$DAMATS_GROUP" ] && error "Missing the required DAMATS_GROUP variable!"
@@ -22,7 +23,7 @@ info "Configuring EOxServer instance ... "
 [ -z "$DAMATS_WPS_TEMP_DIR" ] && error "Missing the required DAMATS_WPS_TEMP_DIR variable!"
 [ -z "$DAMATS_WPS_PERM_DIR" ] && error "Missing the required DAMATS_WPS_PERM_DIR variable!"
 [ -z "$DAMATS_WPS_TASK_DIR" ] && error "Missing the required DAMATS_WPS_TASK_DIR variable!"
-[ -z "$DAMATS_WPS_URL" ] && error "Missing the required DAMATS_WPS_URL variable!"
+[ -z "$DAMATS_WPS_URL_PATH" ] && error "Missing the required DAMATS_WPS_URL_PATH variable!"
 [ -z "$DAMATS_WPS_SOCKET" ] && error "Missing the required DAMATS_WPS_SOCKET variable!"
 [ -z "$DAMATS_WPS_NPROC" ] && error "Missing the required DAMATS_WPS_NPROC variable!"
 [ -z "$DAMATS_WPS_MAX_JOBS" ] && error "Missing the required DAMATS_WPS_MAX_JOBS variable!"
@@ -51,7 +52,7 @@ PG_HBA="`sudo -u postgres psql -qA -d template_postgis -c "SHOW data_directory;"
 
 EOXSLOG="${DAMATS_LOGDIR}/eoxserver/${INSTANCE}/eoxserver.log"
 EOXSCONF="${INSTROOT}/${INSTANCE}/${INSTANCE}/conf/eoxserver.conf"
-EOXSURL="http://${HOSTNAME}/${INSTANCE}/ows?"
+EOXSURL="${DAMATS_URL_ROOT}/${INSTANCE}/ows?"
 EOXSMAXSIZE="20480"
 EOXSMAXPAGE="200"
 
@@ -160,6 +161,13 @@ do
         Require valid-user
     </Location>
 
+    # disable authenntication for OWS from localhost
+    <Location "/eoxs/ows">
+        Require valid-user
+        Require ip 127.0.0.1
+        Require ip ::1
+    </Location>
+
     # static content
     Alias "$INSTSTAT_URL" "$INSTSTAT_DIR"
     <Directory "$INSTSTAT_DIR">
@@ -169,7 +177,7 @@ do
     </Directory>
 
     # WPS static content
-    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM_DIR"
+    Alias "$DAMATS_WPS_URL_PATH" "$DAMATS_WPS_PERM_DIR"
     <Directory "$DAMATS_WPS_PERM_DIR">
         #EnableSendfile off
         Options -MultiViews +FollowSymLinks
@@ -443,7 +451,7 @@ sudo -u "$DAMATS_USER" ex "$EOXSCONF" <<END
 path_temp=$DAMATS_WPS_TEMP_DIR
 path_perm=$DAMATS_WPS_PERM_DIR
 path_task=$DAMATS_WPS_TASK_DIR
-url_base=$DAMATS_WPS_URL
+url_base=$DAMATS_URL_ROOT$DAMATS_WPS_URL_PATH
 socket_file=$DAMATS_WPS_SOCKET
 max_queued_jobs=$DAMATS_WPS_MAX_JOBS
 num_workers=$DAMATS_WPS_NPROC
