@@ -73,7 +73,7 @@ do
     </Directory>
 
     # WPS static content
-    Alias "$DAMATS_WPS_URL" "$DAMATS_WPS_PERM_DIR"
+    Alias "$DAMATS_WPS_URL_PATH" "$DAMATS_WPS_PERM_DIR"
     <Directory "$DAMATS_WPS_PERM_DIR">
         #EnableSendfile off
         Options -MultiViews +FollowSymLinks +Indexes
