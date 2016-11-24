@@ -1,0 +1,164 @@
+[{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Red Channel",
+            "gdal_interpretation": "RedBand",
+            "identifier": "Red",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Green Channel",
+            "gdal_interpretation": "GreenBand",
+            "identifier": "Green",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Blue Channel",
+            "gdal_interpretation": "BlueBand",
+            "identifier": "Blue",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        }
+    ],
+    "data_type": "Byte",
+    "name": "RGB"
+},
+{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Red Channel",
+            "gdal_interpretation": "RedBand",
+            "identifier": "Red",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Green Channel",
+            "gdal_interpretation": "GreenBand",
+            "identifier": "Green",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Blue Channel",
+            "gdal_interpretation": "BlueBand",
+            "identifier": "Blue",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Alpha Channel",
+            "gdal_interpretation": "AlphaBand",
+            "identifier": "Alpha",
+            "name": "Aplha",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        }
+    ],
+    "data_type": "Byte",
+    "name": "RGBA"
+},
+{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Gray Channel",
+            "gdal_interpretation": "GrayIndex",
+            "identifier": "Gray",
+            "name": "Gray",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 255
+                }
+            ],
+            "uom": "none"
+        }
+    ],
+    "data_type": "Byte",
+    "name": "Grayscale"
+},
+{
+    "bands": [
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Gray Channel",
+            "gdal_interpretation": "GrayIndex",
+            "identifier": "Gray",
+            "name": "Gray",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 255
+                }
+            ],
+            "uom": "none"
+        },
+        {
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/byte",
+            "description": "Alpha Channel",
+            "gdal_interpretation": "AlphaBand",
+            "identifier": "Alpha",
+            "name": "Aplha",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/unknown",
+                    "value": 0
+                }
+            ],
+            "uom": "W.m-2.Sr-1"
+        }
+    ],
+    "data_type": "Byte",
+    "name": "GrayAlpha"
+}]
