@@ -386,6 +386,7 @@ COMPONENTS += (
     'eoxs_wps_async.backend',
     'eoxs_wps_async.processes.**',
     'damats.processes.**',
+    'damats.services.**',
 )
 .
 wq
