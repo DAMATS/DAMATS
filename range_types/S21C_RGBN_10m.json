@@ -1,0 +1,65 @@
+[{
+    "bands": [
+        {
+            "color_interpretation": "BlueBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "S21C 10m Band 2 - Blue - uint16",
+            "identifier": "B02",
+            "name": "Blue",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "GreenBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "S21C 10m Band 3 - Green - uint16",
+            "identifier": "B03",
+            "name": "Green",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "RedBand",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "S21C 10, Band 4 - Red - uint16",
+            "identifier": "B04",
+            "name": "Red",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        },
+        {
+            "color_interpretation": "Undefined",
+            "data_type": "UInt16",
+            "definition": "http://www.opengis.net/def/property/netcdf/1.0/unsignedShort",
+            "description": "S21C 10m Band 8 - NIR - uint16",
+            "identifier": "B08",
+            "name": "NIR",
+            "nil_values": [
+                {
+                    "reason": "http://www.opengis.net/def/nil/OGC/0/inapplicable",
+                    "value": "0"
+                }
+            ],
+            "uom": ""
+        }
+    ],
+    "name": "S2:L1C:10m:uint16"
+}]
