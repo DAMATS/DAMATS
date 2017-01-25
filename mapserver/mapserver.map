@@ -1,0 +1,437 @@
+MAP
+    NAME "DAMATS"
+    STATUS ON
+
+    WEB
+        METADATA
+            "wcs_enable_request" "*"
+            "wms_enable_request" "getMap getCapabilities"
+            "wms_title" "DAMATS Static Datasets WMS server"
+            "wms_extent" "-2693291 -3086662 10037210 5440569"
+            "ows_srs" "EPSG:3035 EPSG:2154 EPSG:3034 EPSG:3857 EPSG:4326 EPSG:32625 EPSG:32626 EPSG:32627 EPSG:32628 EPSG:32629 EPSG:32630 EPSG:32631 EPSG:32632 EPSG:32633 EPSG:32634 EPSG:32635 EPSG:32636 EPSG:32637 EPSG:32638"
+            "wms_srs" "EPSG:3035 EPSG:2154 EPSG:3034 EPSG:3857 EPSG:4326 EPSG:32625 EPSG:32626 EPSG:32627 EPSG:32628 EPSG:32629 EPSG:32630 EPSG:32631 EPSG:32632 EPSG:32633 EPSG:32634 EPSG:32635 EPSG:32636 EPSG:32637 EPSG:32638"
+            #"wms_onlineresource" "... URL ..."
+        END # METADATA
+    END # WEB
+
+    EXTENT -2693291 -3086662 10037210 5440569
+    PROJECTION
+        "init=epsg:3035"
+    END # PROJECTION
+
+    LAYER
+        NAME 'CLC2012'
+        TYPE POLYGON
+        CONNECTIONTYPE OGR
+        CONNECTION "clc12_Version_18_5.sqlite"
+        #CONNECTION "clc12_Version_18_5.gdb"
+        DATA "clc12_version_18_5"
+
+        EXTENT -2693291 -3086662 10037210 5440569
+        UNITS meters
+        METADATA
+            "wms_title" "Corine Land Cover 2012"
+            "wms_abstract" "Corine Land Cover 2012, version 18.5"
+            "wms_extent" "-2693291 -3086662 10037210 5440569"
+        END # METADATA
+        PROJECTION
+            "proj=laea"
+            "lat_0=52"
+            "lon_0=10"
+            "x_0=4321000"
+            "y_0=3210000"
+            "ellps=GRS80"
+            "towgs84=0,0,0,0,0,0,0"
+            "units=m"
+            "no_defs"
+        END # PROJECTION
+
+        CLASSITEM "code_12"
+
+        # 1,230,000,077,255, 111 - Continuous urban fabric
+        CLASS
+            NAME "Continuous urban fabric"
+            EXPRESSION "111"
+            STYLE
+                COLOR 230 0 77
+            END # STYLE
+        END #CLASS
+        # 2,255,000,000,255, 112 - Discontinuous urban fabric
+        CLASS
+            NAME "Discontinuous urban fabric"
+            EXPRESSION "112"
+            STYLE
+                COLOR 255 0 0
+            END # STYLE
+        END #CLASS
+        # 3,204,077,242,255, 121 - Industrial or commercial units
+        CLASS
+            NAME "Industrial or commercial units"
+            EXPRESSION "121"
+            STYLE
+                COLOR 204 77 242
+            END # STYLE
+        END #CLASS
+        # 4,204,000,000,255, 122 - Road and rail networks and associated land
+        CLASS
+            NAME "Road and rail networks and associated land"
+            EXPRESSION "122"
+            STYLE
+                COLOR 204 0 0
+            END # STYLE
+        END #CLASS
+        # 5,230,204,204,255, 123 - Port areas
+        CLASS
+            NAME "Port areas"
+            EXPRESSION "123"
+            STYLE
+                COLOR 230 204 204
+            END # STYLE
+        END #CLASS
+        # 6,230,204,230,255, 124 - Airports
+        CLASS
+            NAME "Airports"
+            EXPRESSION "124"
+            STYLE
+                COLOR 230 204 230
+            END # STYLE
+        END #CLASS
+        # 7,166,000,204,255, 131 - Mineral extraction sites
+        CLASS
+            NAME "Mineral extraction sites"
+            EXPRESSION "131"
+            STYLE
+                COLOR 166 0 204
+            END # STYLE
+        END #CLASS
+        # 8,166,077,000,255, 132 - Dump sites
+        CLASS
+            NAME "Dump sites"
+            EXPRESSION "132"
+            STYLE
+                COLOR 166 77 0
+            END # STYLE
+        END #CLASS
+        # 9,255,077,255, 255,133 - Construction sites
+        CLASS
+            NAME "Construction sites"
+            EXPRESSION "133"
+            STYLE
+                COLOR 255 77 255
+            END # STYLE
+        END #CLASS
+        # 10,255,166,255,255,141 - Green urban areas
+        CLASS
+            NAME "Green urban areas"
+            EXPRESSION "141"
+            STYLE
+                COLOR 255 166 255
+            END # STYLE
+        END #CLASS
+        # 11,255,230,255,255,142 - Sport and leisure facilities
+        CLASS
+            NAME "Sport and leisure facilities"
+            EXPRESSION "142"
+            STYLE
+                COLOR 255 230 255
+            END # STYLE
+        END #CLASS
+        # 12,255,255,168,255,211 - Non-irrigated arable land
+        CLASS
+            NAME "Non-irrigated arable land"
+            EXPRESSION "211"
+            STYLE
+                COLOR 255 255 168
+            END # STYLE
+        END #CLASS
+        # 13,255,255,000,255,212 - Permanently irrigated land
+        CLASS
+            NAME "Permanently irrigated land"
+            EXPRESSION "212"
+            STYLE
+                COLOR 255 255 0
+            END # STYLE
+        END #CLASS
+        # 14,230,230,000,255,213 - Rice fields
+        CLASS
+            NAME "Rice fields"
+            EXPRESSION "213"
+            STYLE
+                COLOR 230 230 0
+            END # STYLE
+        END #CLASS
+        # 15,230,128,000,255,221 - Vineyards
+        CLASS
+            NAME "Vineyards"
+            EXPRESSION "221"
+            STYLE
+                COLOR 230 128 0
+            END # STYLE
+        END #CLASS
+        # 16,242,166,077,255,222 - Fruit trees and berry plantations
+        CLASS
+            NAME "Fruit trees and berry plantations"
+            EXPRESSION "222"
+            STYLE
+                COLOR 242 166 77
+            END # STYLE
+        END #CLASS
+        # 17,230,166,000,255,223 - Olive groves
+        CLASS
+            NAME "Olive groves"
+            EXPRESSION "223"
+            STYLE
+                COLOR 230 166 0
+            END # STYLE
+        END #CLASS
+        # 18,230,230,077,255,231 - Pastures
+        CLASS
+            NAME "Pastures"
+            EXPRESSION "231"
+            STYLE
+                COLOR 230 230 77
+            END # STYLE
+        END #CLASS
+        # 19,255,230,166,255,241 - Annual crops associated with permanent crops
+        CLASS
+            NAME "Annual crops associated with permanent crops"
+            EXPRESSION "241"
+            STYLE
+                COLOR 255 230 166
+            END # STYLE
+        END #CLASS
+        # 20,255,230,077,255,242 - Complex cultivation patterns
+        CLASS
+            NAME "Complex cultivation patterns"
+            EXPRESSION "242"
+            STYLE
+                COLOR 255 230 77
+            END # STYLE
+        END #CLASS
+        # 21,230,204,077,255,243 - Land principally occupied by agriculture with significant areas of natural vegetation
+        CLASS
+            NAME "Land principally occupied by agriculture with significant areas of natural vegetation"
+            EXPRESSION "243"
+            STYLE
+                COLOR 230 204 77
+            END # STYLE
+        END #CLASS
+        # 22,242,204,166,255,244 - Agro-forestry areas
+        CLASS
+            NAME "Agro-forestry areas"
+            EXPRESSION "244"
+            STYLE
+                COLOR 242 204 166
+            END # STYLE
+        END #CLASS
+        # 23,128,255,000,255,311 - Broad-leaved forest
+        CLASS
+            NAME "Broad-leaved forest"
+            EXPRESSION "311"
+            STYLE
+                COLOR 128 255 0
+            END # STYLE
+        END #CLASS
+        # 24,000,166,000,255,312 - Coniferous forest
+        CLASS
+            NAME "Coniferous forest"
+            EXPRESSION "312"
+            STYLE
+                COLOR 0 166 0
+            END # STYLE
+        END #CLASS
+        # 25,077,255,000,255,313 - Mixed forest
+        CLASS
+            NAME "Mixed forest"
+            EXPRESSION "313"
+            STYLE
+                COLOR 77 255 0
+            END # STYLE
+        END #CLASS
+        # 26,204,242,077,255,321 - Natural grasslands
+        CLASS
+            NAME "Natural grasslands"
+            EXPRESSION "321"
+            STYLE
+                COLOR 204 242 77
+            END # STYLE
+        END #CLASS
+        # 27,166,255,128,255,322 - Moors and heathland
+        CLASS
+            NAME "Moors and heathland"
+            EXPRESSION "322"
+            STYLE
+                COLOR 166 255 128
+            END # STYLE
+        END #CLASS
+        # 28,166,230,077,255,323 - Sclerophyllous vegetation
+        CLASS
+            NAME "Sclerophyllous vegetation"
+            EXPRESSION "323"
+            STYLE
+                COLOR 166 230 77
+            END # STYLE
+        END #CLASS
+        # 29,166,242,000,255,324 - Transitional woodland-shrub
+        CLASS
+            NAME "Transitional woodland-shrub"
+            EXPRESSION "324"
+            STYLE
+                COLOR 166 242 0
+            END # STYLE
+        END #CLASS
+        # 30,230,230,230,255,331 - Beaches - dunes - sands
+        CLASS
+            NAME "Beaches - dunes - sands"
+            EXPRESSION "331"
+            STYLE
+                COLOR 230 230 230
+            END # STYLE
+        END #CLASS
+        # 31,204,204,204,255,332 - Bare rocks
+        CLASS
+            NAME "Bare rocks"
+            EXPRESSION "332"
+            STYLE
+                COLOR 204 204 204
+            END # STYLE
+        END #CLASS
+        # 32,204,255,204,255,333 - Sparsely vegetated areas
+        CLASS
+            NAME "Sparsely vegetated areas"
+            EXPRESSION "333"
+            STYLE
+                COLOR 204 255 204
+            END # STYLE
+        END #CLASS
+        # 33,000,000,000,255,334 - Burnt areas
+        CLASS
+            NAME "Burnt areas"
+            EXPRESSION "334"
+            STYLE
+                COLOR 0 0 0
+            END # STYLE
+        END #CLASS
+        # 34,166,230,204,255,335 - Glaciers and perpetual snow
+        CLASS
+            NAME "Glaciers and perpetual snow"
+            EXPRESSION "335"
+            STYLE
+                COLOR 166 230 204
+            END # STYLE
+        END #CLASS
+        # 35,166,166,255,255,411 - Inland marshes
+        CLASS
+            NAME "Inland marshes"
+            EXPRESSION "411"
+            STYLE
+                COLOR 166 166 255
+            END # STYLE
+        END #CLASS
+        # 36,077,077,255,255,412 - Peat bogs
+        CLASS
+            NAME "Peat bogs"
+            EXPRESSION "412"
+            STYLE
+                COLOR 77 77 255
+            END # STYLE
+        END #CLASS
+        # 37,204,204,255,255,421 - Salt marshes
+        CLASS
+            NAME "Salt marshes"
+            EXPRESSION "421"
+            STYLE
+                COLOR 204 204 255
+            END # STYLE
+        END #CLASS
+        # 38,230,230,255,255,422 - Salines
+        CLASS
+            NAME "Salines"
+            EXPRESSION "422"
+            STYLE
+                COLOR 230 230 255
+            END # STYLE
+        END #CLASS
+        # 39,166,166,230,255,423 - Intertidal flats
+        CLASS
+            NAME "Intertidal flats"
+            EXPRESSION "423"
+            STYLE
+                COLOR 166 166 230
+            END # STYLE
+        END #CLASS
+        # 40,000,204,242,255,511 - Water courses
+        CLASS
+            NAME "Water courses"
+            EXPRESSION "511"
+            STYLE
+                COLOR 0 204 242
+            END # STYLE
+        END #CLASS
+        # 41,128,242,230,255,512 - Water bodies
+        CLASS
+            NAME "Water bodies"
+            EXPRESSION "512"
+            STYLE
+                COLOR 128 242 230
+            END # STYLE
+        END #CLASS
+        # 42,000,255,166,255,521 - Coastal lagoons
+        CLASS
+            NAME "Coastal lagoons"
+            EXPRESSION "521"
+            STYLE
+                COLOR 0 255 166
+            END # STYLE
+        END #CLASS
+        # 43,166,255,230,255,522 - Estuaries
+        CLASS
+            NAME "Estuaries"
+            EXPRESSION "522"
+            STYLE
+                COLOR 166 255 230
+            END # STYLE
+        END #CLASS
+        # 44,230,242,255,255,523 - Sea and ocean
+        CLASS
+            NAME "Sea and ocean"
+            EXPRESSION "523"
+            STYLE
+                COLOR 230 242 255
+            END # STYLE
+        END #CLASS
+        # 48,255,255,255,255,999 - NODATA
+        CLASS
+            NAME "NODATA"
+            EXPRESSION "999"
+            STYLE
+                COLOR 255 255 255
+            END # STYLE
+        END #CLASS
+        # 49,255,255,255,255,990 - UNCLASSIFIED LAND SURFACE
+        CLASS
+            NAME "UNCLASSIFIED LAND SURFACE"
+            EXPRESSION "990"
+            STYLE
+                COLOR 255 255 255
+            END # STYLE
+        END #CLASS
+        # 50,230,242,255,255,995 - UNCLASSIFIED WATER BODIES
+        CLASS
+            NAME "UNCLASSIFIED WATER BODIES"
+            EXPRESSION "995"
+            STYLE
+                COLOR 230 242 255
+            END # STYLE
+        END #CLASS
+        # 255,255,255,255,255,990 - UNCLASSIFIED
+        CLASS
+            NAME "UNCLASSIFIED"
+            EXPRESSION "990"
+            STYLE
+                COLOR 255 255 255
+            END # STYLE
+        END #CLASS
+    END # LAYER
+
+END # MAP
