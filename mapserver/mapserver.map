@@ -23,8 +23,8 @@ MAP
         NAME 'CLC2012'
         TYPE POLYGON
         CONNECTIONTYPE OGR
-        CONNECTION "clc12_Version_18_5.sqlite"
-        #CONNECTION "clc12_Version_18_5.gdb"
+        CONNECTION "clc12_Version_18_5.gdb"
+        #CONNECTION "clc12_Version_18_5.sqlite"
         DATA "clc12_version_18_5"
 
         EXTENT -2693291 -3086662 10037210 5440569

@@ -1,0 +1,56 @@
+<mapcache>
+  <source name="clc2012" type="wms">
+    <getmap>
+      <params>
+        <FORMAT>image/png</FORMAT>
+        <LAYERS>CLC2012</LAYERS>
+        <TRANSPARENT>true</TRANSPARENT>
+      </params>
+    </getmap>
+    <http>
+      <url>http://localhost/mapserver</url>
+    </http>
+    <connection_timeout>400</connection_timeout>
+  </source>
+
+  <cache name="clc2012" type="sqlite3">
+    <dbfile>/srv/eodata/mapcache/clc2012_mapcache.sqlite</dbfile>
+    <detect_blank>true</detect_blank>
+  </cache>
+
+  <tileset name="CLC2012">
+    <source>clc2012</source>
+    <cache>clc2012</cache>
+    <format>png_fast</format>
+    <!-- grid restricted_extent="-82 30 94 73" maxzoom="12">WGS84</grid -->
+    <grid maxzoom="12">WGS84</grid>
+    <metadata>
+      <title>DAMATS Static Datasets Map Cache</title>
+    </metadata>
+    <!--metatile>4 4</metatile-->
+    <!--metabuffer>10</metabuffer-->
+    <expires>86400</expires>
+  </tileset>
+
+  <format name="png_fast" type="PNG">
+    <compression>fast</compression>
+  </format>
+  <format name="png_default" type="PNG">
+  </format>
+
+  <service type="wmts" enabled="true">
+    <format>png_default</format>
+  </service>
+  <service type="wms" enabled="true">
+    <format>png_default</format>
+    <full_wms>assemble</full_wms>
+    <resample_mode>bilinear</resample_mode>
+    <forwarding_rule name="clc2012">
+      <append_pathinfo>true</append_pathinfo>
+      <http>
+        <url>http://localhost/mapserver</url>
+      </http>
+    </forwarding_rule>
+  </service>
+
+</mapcache>
