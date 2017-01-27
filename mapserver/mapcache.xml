@@ -27,7 +27,7 @@
     <metadata>
       <title>DAMATS Static Datasets Map Cache</title>
     </metadata>
-    <!--metatile>4 4</metatile-->
+    <metatile>8 8</metatile>
     <!--metabuffer>10</metabuffer-->
     <expires>86400</expires>
   </tileset>
