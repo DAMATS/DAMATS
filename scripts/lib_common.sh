@@ -74,7 +74,7 @@ export EOXS_WSGI_PROCESS_GROUP=${EOXS_WSGI_PROCESS_GROUP:-damats_eoxs_ows}
 export DAMATS_CLIENT_HOME=${DAMATS_CLIENT_HOME:-$DAMATS_ROOT/eoxc}
 
 # location of the installed DAMATS algorightms
-export DAMATS_ALGS_ROOT=${DAMATS_ALGS_ROOT:-$DAMATS_ROOT/algs}
+#export DAMATS_ALGS_ROOT=${DAMATS_ALGS_ROOT:-$DAMATS_ROOT/algs}
 
 # WPS configuration - permanent storage location
 export DAMATS_WPS_ROOT_DIR=${DAMATS_WPS_ROOT_DIR:-/srv/wps}
