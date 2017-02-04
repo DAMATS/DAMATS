@@ -21,6 +21,10 @@ yum --assumeyes install scikit-learn scipy python-pillow python-matplotlib numpy
 # Install EOxServer in the development mode.
 pushd .
 cd $DAMATS_ALGS_DEV_PATH
+PACKAGE="DAMATS-Algorithms"
+[ -z "`pip freeze | grep "^$PACKAGE==" `" ] || pip uninstall -y "$PACKAGE"
+[ ! -d build/ ] || rm -fvR build/
+[ ! -d dist/ ] || rm -fvR dist/
+python setup.py develop --uninstall
 python ./setup.py develop
 popd
-

@@ -34,6 +34,13 @@ yum --assumeyes install scikit-learn scipy python-pillow python-matplotlib numpy
 # STEP 3: INSTALL PACKAGE
 # Install DAMATS algorithms in the development mode.
 pushd .
-cd "$ALGS_GIT_PATH"
-python ./setup.py install
+cd $ALGS_GIT_PATH
+PACKAGE="DAMATS-Algorithms"
+[ -z "`pip freeze | grep "^$PACKAGE==" `" ] || pip uninstall -y "$PACKAGE"
+[ ! -d build/ ] || rm -fvR build/
+[ ! -d dist/ ] || rm -fvR dist/
+#git fetch
+#git checkout $ALGS_GIT_BRANCH
+#git pull
+python ./setup.py install 
 popd
