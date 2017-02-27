@@ -92,3 +92,6 @@ export DAMATS_WPS_SOCKET=${DAMATS_WPS_SOCKET:-$DAMATS_WPS_ROOT_DIR/socket}
 export DAMATS_WPS_NPROC=${DAMATS_WPS_NPROC:-4}
 # WPS configuration - maximum number of queued jobs
 export DAMATS_WPS_MAX_JOBS=${DAMATS_WPS_MAX_JOBS:-64}
+
+# CLC12 path
+export DAMATS_CLC12_PATH=${DAMATS_CLC12_PATH:-<set the CLC12 path>}

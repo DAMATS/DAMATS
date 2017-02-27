@@ -27,6 +27,7 @@ info "Configuring EOxServer instance ... "
 [ -z "$DAMATS_WPS_SOCKET" ] && error "Missing the required DAMATS_WPS_SOCKET variable!"
 [ -z "$DAMATS_WPS_NPROC" ] && error "Missing the required DAMATS_WPS_NPROC variable!"
 [ -z "$DAMATS_WPS_MAX_JOBS" ] && error "Missing the required DAMATS_WPS_MAX_JOBS variable!"
+[ -z "$DAMATS_CLC12_PATH" ] && error "Missing the required DAMATS_CLC12_PATH variable!"
 
 HOSTNAME="$DAMATS_HOSTNAME"
 INSTANCE="`basename "$DAMATS_SERVER_HOME"`"
@@ -389,6 +390,19 @@ COMPONENTS += (
     'damats.services.**',
 )
 .
+\$a
+# DAMATS specific settings
+DAMATS_WCS_URL = "http://127.0.0.1:80/eoxs/ows?"
+DAMATS_LAND_COVER_DATASETS = [
+    {
+        "identifier": "CLC2012",
+        "title": "Corine Land Cover 2012",
+        "path": "$DAMATS_CLC12_PATH",
+        "layer": "clc12_Version_18_5",
+        "attrib": "code_12",
+        "classes": "damats.util.clc.classes.CLC2012_CLASSES",
+    },
+]
 wq
 END
 
@@ -474,7 +488,7 @@ done
 # systemd daemon integration
 cat > /etc/systemd/system/eoxs_wps_async.service <<END
 [Unit]
-Description= Asynchronous EOxServer WPS Daemon
+Description=Asynchronous EOxServer WPS Daemon
 After=network.target
 Before=httpd.service
 
