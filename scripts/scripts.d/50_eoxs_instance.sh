@@ -403,6 +403,7 @@ DAMATS_LAND_COVER_DATASETS = [
         "classes": "damats.util.clc.classes.CLC2012_CLASSES",
     },
 ]
+.
 wq
 END
 
@@ -449,7 +450,22 @@ info "Initializing EOxServer instance '${INSTANCE}' ..."
 sudo -u "$DAMATS_USER" python "$MNGCMD" collectstatic -l --noinput
 
 # setup new database
-sudo -u "$DAMATS_USER" python "$MNGCMD" makemigrations
+#sudo -u "$DAMATS_USER" python "$MNGCMD" makemigrations
+# NOTE: Django 1.8 'makemigrations' does not seem to properly initialize
+#       new migrations and the command has to be called for each app separately.
+#       See: http://stackoverflow.com/questions/29689365/auth-user-error-with-django-1
+{
+python - << END
+import sys
+sys.path.append("$INSTROOT/$INSTANCE")
+import ${INSTANCE}.settings as settings
+for app in settings.INSTALLED_APPS:
+    print app.rpartition('.')[-1]
+END
+} | while read APP
+do
+    python "$MNGCMD" makemigrations "$APP"
+done
 sudo -u "$DAMATS_USER" python "$MNGCMD" migrate
 
 #-------------------------------------------------------------------------------
