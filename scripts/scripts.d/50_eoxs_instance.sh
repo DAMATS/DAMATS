@@ -511,6 +511,7 @@ Before=httpd.service
 [Service]
 Type=simple
 User=damats
+ExecStartPre=/usr/bin/rm -fv $DAMATS_WPS_SOCKET
 ExecStart=/usr/bin/python -EsOm eoxs_wps_async.daemon ${INSTANCE}.settings $INSTROOT/$INSTANCE
 
 [Install]
